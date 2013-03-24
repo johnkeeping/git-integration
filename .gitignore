@@ -1,0 +1,8 @@
+/config.mak
+
+/git-integration
+docbook-xsl.css
+*.1
+*.html
+
+t/test-results/
