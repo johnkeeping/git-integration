@@ -1,12 +1,14 @@
 #!/bin/sh
 
-SHARNESS_TEST_EXTENSION=sh
-. ./sharness/sharness.sh
+. ../BUILD-VARS
+export SHELL_PATH
 
 # Add the git-integrate directory to $PATH.
 PATH=$(cd ..; pwd):$PATH
 export PATH
 
+SHARNESS_TEST_EXTENSION=sh
+. ./sharness/sharness.sh
 
 if ! type git-integration >/dev/null
 then
@@ -39,7 +41,7 @@ commit_file () {
 
 write_script () {
 	{
-		echo "#!/bin/sh" &&
+		echo "#!$SHELL_PATH" &&
 		cat
 	} >"$1" &&
 	chmod +x "$1"
