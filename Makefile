@@ -5,6 +5,7 @@ bindir = $(prefix)/bin
 mandir = $(prefix)/share/man
 man1dir = $(mandir)/man1
 
+A2X = a2x
 INSTALL = install
 
 -include config.mak
@@ -30,10 +31,10 @@ git-integration: git-integration.sh
 	$(QUIET_GEN)cp $^ $@
 
 $(DOC_MAN1): %.1: %.txt
-	$(QUIET_ASCIIDOC)a2x -d manpage -f manpage $<
+	$(QUIET_ASCIIDOC)$(A2X) -d manpage -f manpage $<
 
 $(MAN_HTML): %.html: %.txt
-	$(QUIET_ASCIIDOC)a2x -d manpage -f xhtml $<
+	$(QUIET_ASCIIDOC)$(A2X) -d manpage -f xhtml $<
 
 man: man1
 man1: $(DOC_MAN1)
