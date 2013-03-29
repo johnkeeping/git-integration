@@ -18,7 +18,7 @@ QUIET_ASCIIDOC = @echo ' ASCIIDOC $@';
 export QUIET_GEN
 endif
 
-MAN1_TXT = git-integration.txt
+MAN1_TXT = Documentation/git-integration.txt
 MAN_TXT = $(MAN1_TXT)
 MAN_HTML = $(patsubst %.txt,%.html,$(MAN_TXT))
 
