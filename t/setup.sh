@@ -17,7 +17,7 @@ fi
 
 if test -z "$TEST_NO_CREATE_REPO"
 then
-	git init >/dev/null
+	git init >/dev/null || die
 fi
 
 
