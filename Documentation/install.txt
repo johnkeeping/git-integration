@@ -1,19 +1,19 @@
-Run 'make install', which will install the script into your '~/bin/'
+Run `make install`, which will install the script into your `~/bin/`
 directory.  You can customize the installation location by creating the file
-'config.mak' with the contents:
+`config.mak` with the contents:
 
     prefix = /usr/local
 
 If you want to install the documentation you will need to have
 link:http://www.methods.co.nz/asciidoc/[AsciiDoc] installed, then run
-'make install-doc'.
+`make install-doc`.
 
-To install the Bash completion script, run 'make install-completion', you may
-then need to amend your Bash profile to load this script.  'git-integration''s
+To install the Bash completion script, run `make install-completion`, you may
+then need to amend your Bash profile to load this script.  `git-integration`'s
 completion script depends on the completion for Git being available.
 
 To run the tests, you must initialize the 'sharness' submodule:
 
     git submodule update --init
 
-then run 'make test'.
+then run `make test`.
