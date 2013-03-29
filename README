@@ -1,32 +1,6 @@
 git-integration
 ===============
 
-This script helps you manage integration branches, which are a way of pulling
-together in-flight topics to run the result for testing.
+See Documentation/install.txt for installation instructions.
 
-Say you are developing several new features on the branches 'feature-a',
-'feature-b' and 'feature-c', while ongoing development is also happening on
-the 'master' branch.  Using 'git integration' you can view the result of
-merging all of the feature branches into 'master' and keep that branch updated
-as all of these branches change.
-
-See link:git-integration.txt for a full description.
-
-Install
--------
-
-Run 'make install', which will install the script into your '~/bin/'
-directory.  You can customize the installation location by creating the file
-'config.mak' with the contents:
-
-    prefix = /usr/local
-
-If you want to install the documentation you will need to have AsciiDoc[1]
-installed, then run 'make install-doc'.
-
-[1] http://www.methods.co.nz/asciidoc/
-
-License
--------
-
-'git integration' is copyright 2013 John Keeping.
+Documentation/description.txt contains a description of git-integration.
