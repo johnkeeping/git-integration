@@ -1,0 +1,58 @@
+#!bash
+
+__git_integration_branches () {
+	git for-each-ref --format='%(refname)' refs/insns/ |
+	sed -e 's!^refs/insns/!!'
+}
+
+__git_integration_options="--create --edit --rebuild --continue --abort"
+
+_git_integration () {
+	# Disable default filename completion.  Note that "compopt" is only
+	# available in Bash 4 and newer, so we check for existence before
+	# trying to use it.
+	type compopt >/dev/null 2>&1 && compopt +o default +o bashdefault
+
+	case "$cur" in
+	-*)
+		__gitcomp "$__git_integration_options"
+		return
+	esac
+
+	local i found_command=0 found_create=0 nargs=0
+	for ((i=0; i < ${cword}; i++)); do
+		case "$found_command,${words[i]}" in
+		1,--create)
+			found_create=1
+			;;
+		?,-*)
+			:
+			;;
+		0,integration)
+			# This is the start of the arguments to
+			# "git integration".
+			found_command=1
+			;;
+		1,*)
+			((nargs++))
+			;;
+		esac
+	done
+
+	case $found_create,$nargs in
+	0,0)
+		__gitcomp_nl "$(__git_integration_branches)"
+		;;
+	?,1)
+		__gitcomp_nl "$(__git_heads)"
+		;;
+	*)
+		COMPREPLY=()
+		return
+	esac
+
+	if test -z "$cur"
+	then
+		COMPREPLY+=($(compgen -W "$__git_integration_options"))
+	fi
+}

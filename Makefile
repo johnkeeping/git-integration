@@ -4,6 +4,7 @@ prefix = $(HOME)
 bindir = $(prefix)/bin
 mandir = $(prefix)/share/man
 man1dir = $(mandir)/man1
+bashcompletiondir = $(prefix)/share/bash-completion
 
 ASCIIDOC = asciidoc
 INSTALL = install
@@ -25,6 +26,7 @@ export mandir man1dir
 
 DESTDIR_SQ = $(subst ','\'',$(DESTDIR))
 bindir_SQ = $(subst ','\'',$(bindir))
+bashcompletiondir_SQ = $(subst ','\'',$(bashcompletiondir))
 
 SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
 
@@ -61,7 +63,12 @@ doc man html:
 install-doc:
 	$(MAKE) -C Documentation/ install
 
-.PHONY: FORCE all test install install-doc doc man html
+install-completion:
+	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bashcompletiondir_SQ)'
+	$(INSTALL) -m 644 git-integration.bashcomplete \
+		'$(DESTDIR_SQ)$(bashcompletiondir_SQ)/git-integration'
+
+.PHONY: FORCE all test install install-doc install-completion doc man html
 
 
 gh-pages:
