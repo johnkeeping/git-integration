@@ -1,0 +1,56 @@
+Use 'git integration' to manage a branch which is the result of merging
+several in-progress topic branches onto a base branch.
+
+Say you are developing several new features on the branches 'feature-a',
+'feature-b' and 'feature-c', while ongoing development is also happening on
+the 'master' branch.  Using 'git integration' you can view the result of
+merging all of the feature branches into 'master' and keep that branch updated
+as all of these branches change.
+
+So you start with the following:
+
+    o---o master
+        |\
+        | o---o feature-a
+         \
+          o---o feature-b
+
+when you create an integration branch including 'feature-a' and 'feature-b':
+
+    git integration --create integration master
+    git integration --edit
+
+edit the instruction sheet to look like:
+------
+base master
+merge feature-a
+merge feature-b
+------
+then rebuild:
+
+    git integration --rebuild
+
+the result will be:
+
+    o---o master
+        |\
+        | o---o feature-a
+        |\     \
+        | ------o---o integration
+         \         /
+          o---o---- feature-b
+
+should further development then happen on 'master', rebuilding the integration
+branch:
+
+    git integration --rebuild integration
+
+will give the following result:
+
+    o---o---o---o master
+        |        \
+        |       --o---o integration
+        |\     /     /
+        | o---o     /  feature-a
+         \         /
+          o---o---- feature-b
