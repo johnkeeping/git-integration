@@ -8,7 +8,7 @@ PATH=$(cd ..; pwd):$PATH
 export PATH
 
 
-if ! type git-integration
+if ! type git-integration >/dev/null
 then
 	echo "git-integration doesn't exist.  Have you built it?" >&2
 	exit 1
@@ -17,7 +17,7 @@ fi
 
 if test -z "$TEST_NO_CREATE_REPO"
 then
-	git init
+	git init >/dev/null
 fi
 
 
