@@ -30,10 +30,10 @@ git-integration: git-integration.sh
 	$(QUIET_GEN)cp $^ $@
 
 $(DOC_MAN1): %.1: %.txt
-	$(QUIET_ASCIIDOC)a2x -f manpage $<
+	$(QUIET_ASCIIDOC)a2x -d manpage -f manpage $<
 
 $(MAN_HTML): %.html: %.txt
-	$(QUIET_ASCIIDOC)a2x -f xhtml $<
+	$(QUIET_ASCIIDOC)a2x -d manpage -f xhtml $<
 
 man: man1
 man1: $(DOC_MAN1)
