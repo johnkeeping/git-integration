@@ -1,6 +1,7 @@
 /config.mak
 
 /git-integration
+/gh-pages
 *.1
 *.html
 
