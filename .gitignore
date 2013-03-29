@@ -1,5 +1,7 @@
 /config.mak
 
+/BUILD-VARS
+
 /git-integration
 /gh-pages
 *.1

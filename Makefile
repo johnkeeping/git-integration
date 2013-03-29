@@ -8,6 +8,10 @@ man1dir = $(mandir)/man1
 ASCIIDOC = asciidoc
 INSTALL = install
 
+ifndef SHELL_PATH
+	SHELL_PATH = /bin/sh
+endif
+
 -include config.mak
 
 ifeq ($(V),)
@@ -16,13 +20,31 @@ QUIET_GEN =      @echo '      GEN $@';
 export QUIET_GEN
 endif
 
+export SHELL_PATH
 export mandir man1dir
 
 DESTDIR_SQ = $(subst ','\'',$(DESTDIR))
 bindir_SQ = $(subst ','\'',$(bindir))
 
-git-integration: git-integration.sh
-	$(QUIET_GEN)cp $^ $@
+SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
+
+SHELL = $(SHELL_PATH)
+
+# Values in the BUILD-VARS file are double-sq-escaped so that the file can be
+# sourced into the script used when running tests.
+BUILD-VARS: FORCE
+	@echo SHELL_PATH=\''$(subst ','\'',$(SHELL_PATH_SQ))'\' >$@+ && \
+	if cmp $@ $@+ >/dev/null 2>&1; then \
+		rm -f $@+; \
+	else \
+		echo >&2 ' * build variables changed' && \
+		mv $@+ $@; \
+	fi
+
+git-integration: git-integration.sh BUILD-VARS
+	$(QUIET_GEN)sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' $< >$@+ && \
+	chmod +x $@+ && \
+	mv $@+ $@
 
 all:: git-integration
 
@@ -39,7 +61,7 @@ doc man html:
 install-doc:
 	$(MAKE) -C Documentation/ install
 
-.PHONY: all test install install-doc doc man html
+.PHONY: FORCE all test install install-doc doc man html
 
 
 gh-pages:
