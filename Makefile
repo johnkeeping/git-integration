@@ -6,6 +6,7 @@ mandir = $(prefix)/share/man
 man1dir = $(mandir)/man1
 
 A2X = a2x
+ASCIIDOC = asciidoc
 INSTALL = install
 
 -include config.mak
@@ -34,7 +35,7 @@ $(DOC_MAN1): %.1: %.txt
 	$(QUIET_ASCIIDOC)$(A2X) -d manpage -f manpage $<
 
 $(MAN_HTML): %.html: %.txt
-	$(QUIET_ASCIIDOC)$(A2X) -d manpage -f xhtml $<
+	$(QUIET_ASCIIDOC)$(ASCIIDOC) -b html5 $<
 
 man: man1
 man1: $(DOC_MAN1)
