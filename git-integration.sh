@@ -73,9 +73,8 @@ integration_create () {
 	test $# != 0 || usage
 	branch="refs/heads/$1"
 	shift
+	test $# -le 1 || usage
 	base=${1-master}
-	shift
-	test $# = 0 || usage
 
 	git check-ref-format "$branch" &&
 	git rev-parse --verify "$base" >/dev/null &&
