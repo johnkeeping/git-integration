@@ -11,7 +11,7 @@ ifeq ($(V),)
 QUIET_ASCIIDOC = @echo ' ASCIIDOC $@';
 endif
 
-MAN1_TXT = Documentation/git-integration.txt
+MAN1_TXT = git-integration.txt
 MAN_TXT = $(MAN1_TXT)
 MAN_HTML = $(patsubst %.txt,%.html,$(MAN_TXT))
 
