@@ -49,7 +49,7 @@ git-integration: git-integration.sh BUILD-VARS
 all:: git-integration
 
 test: all
-	$(MAKE) -C t
+	@$(MAKE) --no-print-directory -C t
 
 install: all
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bindir_SQ)'
