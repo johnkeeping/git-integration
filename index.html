@@ -94,25 +94,25 @@ branch:</p></div>
 <div class="sect1">
 <h2 id="_install">INSTALL</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Run <em>make install</em>, which will install the script into your <em>~/bin/</em>
+<div class="paragraph"><p>Run <code>make install</code>, which will install the script into your <code>~/bin/</code>
 directory.  You can customize the installation location by creating the file
-<em>config.mak</em> with the contents:</p></div>
+<code>config.mak</code> with the contents:</p></div>
 <div class="literalblock">
 <div class="content monospaced">
 <pre>prefix = /usr/local</pre>
 </div></div>
 <div class="paragraph"><p>If you want to install the documentation you will need to have
 <a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> installed, then run
-<em>make install-doc</em>.</p></div>
-<div class="paragraph"><p>To install the Bash completion script, run <em>make install-completion</em>, you may
-then need to amend your Bash profile to load this script.  <em>git-integration</em>'s
+<code>make install-doc</code>.</p></div>
+<div class="paragraph"><p>To install the Bash completion script, run <code>make install-completion</code>, you may
+then need to amend your Bash profile to load this script.  <code>git-integration</code>'s
 completion script depends on the completion for Git being available.</p></div>
 <div class="paragraph"><p>To run the tests, you must initialize the <em>sharness</em> submodule:</p></div>
 <div class="literalblock">
 <div class="content monospaced">
 <pre>git submodule update --init</pre>
 </div></div>
-<div class="paragraph"><p>then run <em>make test</em>.</p></div>
+<div class="paragraph"><p>then run <code>make test</code>.</p></div>
 </div>
 </div>
 <div class="sect1">
