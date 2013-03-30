@@ -47,7 +47,7 @@ as all of these branches change.</p></div>
 <div class="literalblock">
 <div class="content monospaced">
 <pre>git integration --create integration master
-git integration --edit</pre>
+git integration --edit --rebuild</pre>
 </div></div>
 <div class="paragraph"><p>edit the instruction sheet to look like:</p></div>
 <div class="listingblock">
@@ -55,11 +55,6 @@ git integration --edit</pre>
 <pre>base master
 merge feature-a
 merge feature-b</pre>
-</div></div>
-<div class="paragraph"><p>then rebuild:</p></div>
-<div class="literalblock">
-<div class="content monospaced">
-<pre>git integration --rebuild</pre>
 </div></div>
 <div class="paragraph"><p>the result will be:</p></div>
 <div class="literalblock">
