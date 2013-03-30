@@ -12,11 +12,11 @@ git integration --rebuild [<branch>]
 git integration --continue | --abort
 --
  Actions:
-create! create a new integration branch
-edit! edit the instruction sheet for a branch
-rebuild rebuild an integration branch
-abort! abort an in-progress rebuild
-continue! continue an in-progress rebuild
+create!    create a new integration branch
+edit!      edit the instruction sheet for a branch
+rebuild    rebuild an integration branch
+abort!     abort an in-progress rebuild
+continue!  continue an in-progress rebuild
 '
 . git-sh-setup
 set_reflog_action integration
