@@ -33,8 +33,6 @@ _x40="$_x40$_x40$_x40$_x40$_x40$_x40$_x40$_x40"
 comment_char=$(git config --get core.commentchar 2>/dev/null | cut -c1)
 : ${comment_char:=#}
 
-create_mode=
-
 state_dir="$GIT_DIR/integration"
 start_file="$state_dir/start-point"
 head_file="$state_dir/head-name"
@@ -70,14 +68,9 @@ write_insn_sheet () {
 }
 
 integration_create () {
-	test $# != 0 || usage
-	branch="refs/heads/$1"
-	shift
-	test $# -le 1 || usage
-	base=${1-master}
+	branch=$1
+	base=$2
 
-	git check-ref-format "$branch" &&
-	git rev-parse --verify "$base" >/dev/null &&
 	git update-ref $branch $base $_x40 &&
 
 	echo "base $base" |
@@ -87,22 +80,8 @@ integration_create () {
 	echo "Integration branch $branch created."
 }
 
-create_or_die () {
-	test -n "$create_mode" || die "No such branch: $1"
-	integration_create "$1"
-}
-
 integration_edit () {
-	if test $# = 0
-	then
-		branch=$(git symbolic-ref HEAD 2>/dev/null) ||
-		die "HEAD is detached, could not figure out which branch you want to edit"
-	else
-		branch=$(git rev-parse --symbolic-full-name $1 2>/dev/null) ||
-		create_or_die "$1"
-		shift
-	fi
-	test $# = 0 || usage
+	branch=$1
 
 	test -f "$insns" &&
 	die "Integration already in progress."
@@ -253,19 +232,10 @@ run_integration () {
 }
 
 integration_rebuild () {
+	branch=$1
 	require_clean_work_tree integrate "Please commit or stash them."
-	if test $# = 0
-	then
-		branch=$(git symbolic-ref HEAD 2>/dev/null) ||
-		die "HEAD is detached, could not figure out which branch you want to edit"
-	else
-		branch=$(git rev-parse --symbolic-full-name $1 2>/dev/null) ||
-		die "No such branch: $1"
-		shift
 
-		git checkout $branch || exit
-	fi
-	test $# = 0 || usage
+	git checkout "$branch" || exit
 
 	ref=$(integration_ref $branch)
 
@@ -323,21 +293,22 @@ integration_continue () {
 }
 
 action=
+do_create=0
+do_edit=0
+do_rebuild=0
 
 total_argc=$#
 while test $# != 0
 do
 	case "$1" in
 	--create)
-		create_mode=explicit
+		do_create=1
 		;;
 	--edit)
-		test -z "$action" || usage
-		action=edit
+		do_edit=1
 		;;
 	--rebuild)
-		test -z "$action" || usage
-		action=rebuild
+		do_rebuild=1
 		;;
 	--abort|--continue)
 		test -z "$action" || usage
@@ -355,14 +326,9 @@ do
 	shift
 done
 
-if test -z "$action"
+if test -n "$action"
 then
-	if test -n "$create_mode"
-	then
-		action=create
-	else
-		usage
-	fi
+	test $do_create != 1 && test $do_edit != 1 && test $do_rebuild != 1 || usage
 fi
 
 case $action in
@@ -380,17 +346,54 @@ case $action in
 		;;
 esac
 
-case $action in
-	create)
-		integration_create "$@"
-		;;
-	edit)
-		integration_edit "$@"
-		;;
-	rebuild)
-		integration_rebuild "$@"
-		;;
-	*)
-		usage
-		;;
-esac
+test $do_create = 1 || test $do_edit = 1 || test $do_rebuild = 1 || usage
+
+branch=
+if test $do_create = 1
+then
+	test $# != 0 || usage
+
+	branch=$(git check-ref-format --normalize "refs/heads/$1") ||
+	die "invalid branch name: $1"
+	shift
+	if test $# = 0
+	then
+		base=master
+	else
+		base=$2
+		shift
+		git rev-parse --quiet --verify "$base^{commit}" >/dev/null ||
+		die "no such branch: $base"
+	fi
+
+	test $# = 0 || usage
+
+	integration_create "$branch" "$base"
+else
+	if test $# = 0
+	then
+		branch=$(git symbolic-ref HEAD 2>/dev/null) ||
+		die "HEAD is detached, could not figure out which integration branch to use"
+	else
+		branch=$(git check-ref-format --normalize "refs/heads/${1#refs/heads/}") &&
+		git rev-parse --quiet --verify "$branch^{commit}" >/dev/null ||
+		die "no such branch: $1"
+
+		shift
+	fi
+
+	git rev-parse --quiet --verify "$(integration_ref "$branch")" >/dev/null ||
+	die "Not an integration branch: ${branch#refs/heads/}"
+fi
+
+test $# = 0 || usage
+
+if test $do_edit = 1
+then
+	integration_edit "$branch"
+fi
+
+if test $do_rebuild = 1
+then
+	integration_rebuild "$branch"
+fi

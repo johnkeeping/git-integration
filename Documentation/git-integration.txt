@@ -9,8 +9,7 @@ SYNOPSIS
 --------
 [verse]
 'git integration' --create <name> [<base>]
-'git integration' --edit [--create] [<branch>]
-'git integration' --rebuild [<branch>]
+'git integration' [--edit] [--rebuild] [<branch>]
 'git integration' --continue | --abort
 
 DESCRIPTION
@@ -21,28 +20,35 @@ OPTIONS
 -------
 --create::
 	Create a new integration branch.  If '--edit' is also specified then
-	the instruction sheet will be opened for editing, but the base branch
-	cannot be specified explicitly.
+	the instruction sheet will be opened for editing.  If '--rebuild' is
+	also specified then the branch will be built.
 +
 The name of the integration branch must be specified.  If a second positional
 argument is specified then it is used as the base branch, otherwise ``master''
 will be used.
 
 --edit::
-	Edit the instruction sheet for an integration branch.  If '--create'
-	is also specified then the integration branch need not already exist.
+	Edit the instruction sheet for an integration branch.
 +
 If no branch name is specified then the current branch must be an existing
 integration branch.
 
 --rebuild::
 	Rebuild the integration branch.
++
+If no branch name is specified then the current branch must be an existing
+integration branch.
 
 --continue::
 	Restart the building process after having resolved a merge conflict.
 
 --abort::
 	Abort the rebuild operation and reset HEAD to the original branch.
+
+If `--continue` or `--abort` are specified then no other options may be given.
+Otherwise at least one of `--create`, `--edit` or `--rebuild` must be
+specified.  If more than one is specified then they will be performed in the
+order 'create', 'edit', 'rebuild'.
 
 FORMAT OF INSTRUCTIONS
 ----------------------

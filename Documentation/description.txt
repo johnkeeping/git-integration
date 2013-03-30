@@ -18,7 +18,7 @@ So you start with the following:
 when you create an integration branch including 'feature-a' and 'feature-b':
 
     git integration --create integration master
-    git integration --edit
+    git integration --edit --rebuild
 
 edit the instruction sheet to look like:
 ------
@@ -26,10 +26,6 @@ base master
 merge feature-a
 merge feature-b
 ------
-then rebuild:
-
-    git integration --rebuild
-
 the result will be:
 
     o---o master
