@@ -83,9 +83,6 @@ integration_create () {
 integration_edit () {
 	branch=$1
 
-	test -f "$insns" &&
-	die "Integration already in progress."
-
 	ref=$(integration_ref $branch)
 
 	edit_file="$GIT_DIR/GIT-INTEGRATION-INSN"
