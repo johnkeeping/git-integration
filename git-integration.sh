@@ -14,7 +14,7 @@ git integration --continue | --abort
  Actions:
 create! create a new integration branch
 edit! edit the instruction sheet for a branch
-rebuild! rebuild an integration branch
+rebuild rebuild an integration branch
 abort! abort an in-progress rebuild
 continue! continue an in-progress rebuild
 '
@@ -306,6 +306,9 @@ do
 		;;
 	--rebuild)
 		do_rebuild=1
+		;;
+	--no-rebuild)
+		do_rebuild=0
 		;;
 	--abort|--continue)
 		test -z "$action" || usage
