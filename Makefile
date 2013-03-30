@@ -78,7 +78,12 @@ gh-pages:
 	git read-tree gh-pages && \
 	git checkout-index --prefix=gh-pages/ --all && \
 	$(ASCIIDOC) --conf Documentation/site.asciidoc.conf -b html5 \
-		--out-file=gh-pages/index.html Documentation/index.txt && \
+		--out-file=gh-pages/index.html Documentation/index.txt
+
+commit-gh-pages: gh-pages
+	GIT_INDEX_FILE=.git/gh-pages.index && \
+	export GIT_INDEX_FILE && \
+	git read-tree gh-pages && \
 	blob=$$(git hash-object -w gh-pages/index.html) && \
 	git update-index --add --cacheinfo 100644 $$blob index.html && \
 	oldtree=$$(git rev-parse --verify gh-pages^{tree}) && \
