@@ -5,7 +5,7 @@
 
 SUBDIRECTORY_OK=Yes
 OPTIONS_KEEPDASHDASH=
-OPTIONS_SPEC='
+OPTIONS_SPEC="\
 git integration --create <name> [<base>]
 git integration --edit [--create] [<branch>]
 git integration --rebuild [<branch>]
@@ -17,7 +17,7 @@ edit!      edit the instruction sheet for a branch
 rebuild    rebuild an integration branch
 abort!     abort an in-progress rebuild
 continue!  continue an in-progress rebuild
-'
+"
 . git-sh-setup
 set_reflog_action integration
 require_work_tree_exists
