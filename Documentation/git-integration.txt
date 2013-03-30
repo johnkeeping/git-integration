@@ -50,6 +50,13 @@ Otherwise at least one of `--create`, `--edit` or `--rebuild` must be
 specified.  If more than one is specified then they will be performed in the
 order 'create', 'edit', 'rebuild'.
 
+CONFIGURATION
+-------------
+
+integration.autorebuild
+	Automatically rebuild the integration branch after creating/editing it
+	if --no-rebuild is not specified.
+
 FORMAT OF INSTRUCTIONS
 ----------------------
 The instruction sheet consists of a series of instructions which begin in

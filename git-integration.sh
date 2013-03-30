@@ -292,7 +292,7 @@ integration_continue () {
 action=
 do_create=0
 do_edit=0
-do_rebuild=0
+do_rebuild=auto
 
 total_argc=$#
 while test $# != 0
@@ -388,6 +388,12 @@ test $# = 0 || usage
 if test $do_edit = 1
 then
 	integration_edit "$branch"
+fi
+
+if test $do_rebuild = auto
+then
+	test "$(git config --bool --get integration.autorebuild)" = true &&
+	do_rebuild=1
 fi
 
 if test $do_rebuild = 1
