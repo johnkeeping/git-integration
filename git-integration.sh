@@ -154,7 +154,7 @@ break_integration () {
 
 Once you have resolved this, run:
 
-	git integration continue
+	git integration --continue
 
 NOTE: Any changes to the instruction sheet will not be saved.
 EOF
