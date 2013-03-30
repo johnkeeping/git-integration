@@ -46,3 +46,8 @@ write_script () {
 	} >"$1" &&
 	chmod +x "$1"
 }
+
+test_config () {
+	test_when_finished git config --unset "$@" &&
+	git config "$@"
+}
