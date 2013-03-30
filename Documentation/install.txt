@@ -4,6 +4,9 @@ directory.  You can customize the installation location by creating the file
 
     prefix = /usr/local
 
+Make sure that the `bin` directory into which you install `git-integration` is
+on your 'PATH'.
+
 If you want to install the documentation you will need to have
 link:http://www.methods.co.nz/asciidoc/[AsciiDoc] installed, then run
 `make install-doc`.
