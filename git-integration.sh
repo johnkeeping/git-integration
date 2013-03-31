@@ -163,9 +163,9 @@ do_merge () {
 			$branch_to_merge |
 		git fmt-merge-msg --log --message \
 			"Merge branch '$branch_to_merge' into ${branch#refs/heads/}" |
-		git stripspace --strip-comments
+		git stripspace --strip-comments &&
 		printf '\n%s\n' "$message"
-	)
+	) || die "failed to create message for merge commit"
 	echo "Merging branch $branch_to_merge"
 	git merge --no-ff -m "$merge_msg" $branch_to_merge ||
 	break_integration
