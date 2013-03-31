@@ -142,7 +142,7 @@ finish_integration () {
 	git symbolic-ref HEAD "$branch" &&
 	rm -rf "$state_dir" &&
 	git gc --auto &&
-	echo >&2 "Successfully re-integrated ${branch#refs/heads/}"
+	echo "Successfully re-integrated ${branch#refs/heads/}."
 }
 
 do_merge () {
