@@ -15,7 +15,8 @@ To install the Bash completion script, run `make install-completion`, you may
 then need to amend your Bash profile to load this script.  `git-integration`'s
 completion script depends on the completion for Git being available.
 
-To run the tests, you must initialize the 'sharness' submodule:
+To run the tests, you must initialize the
+link:http://mlafeldt.github.com/sharness[Sharness] submodule:
 
     git submodule update --init
 
