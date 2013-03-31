@@ -179,7 +179,8 @@ do_base () {
 		echo >&2 "warning: dropping the following branches (resetting to base $base)"
 		cat "$merged" | sed -e 's/^/warning: /' >&2
 	}
-	git reset --hard "$base" ||
+	echo "Resetting to base ${base}..."
+	git reset --quiet --hard "$base" ||
 	break_integration "Failed to reset to base $base"
 	current_insn=
 }
