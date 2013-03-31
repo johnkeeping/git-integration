@@ -232,7 +232,9 @@ integration_rebuild () {
 	branch=$1
 	require_clean_work_tree integrate "Please commit or stash them."
 
-	git checkout "$branch" || exit
+	orig_head=$(git rev-parse --quiet --verify "$branch^{commit}") || exit
+	git checkout --quiet "$branch^0" || die "could not detach HEAD"
+	git update-ref ORIG_HEAD $orig_head
 
 	ref=$(integration_ref $branch)
 
@@ -244,9 +246,6 @@ integration_rebuild () {
 
 	echo $branch >"$head_file"
 	git rev-parse --quiet --verify "$branch" >"$start_file"
-
-	git checkout --detach HEAD >/dev/null 2>&1 ||
-	die "Failed to detach head"
 
 	git cat-file blob $ref:GIT-INTEGRATION-INSN >"$insns" ||
 	die "Failed to read instruction list for branch ${branch#refs/heads/}"
