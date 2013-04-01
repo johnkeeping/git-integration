@@ -189,7 +189,7 @@ finalize_command () {
 	first_line=$(echo "$1" | sed -n -e 1p)
 	test -n "$first_line" || return 0
 
-	message=$(echo "$1" | sed -n -e 1d)
+	message=$(echo "$1" | sed -e 1d)
 	cmd=${first_line%% *}
 	args=${first_line#* }
 	case "$cmd" in
