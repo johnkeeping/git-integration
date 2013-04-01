@@ -1,4 +1,5 @@
 SHELL_PATH ?= /bin/sh
+PROVE ?= prove
 
 -include ../config.mak
 
@@ -8,7 +9,10 @@ T = $(sort $(wildcard t[0-9][0-9][0-9][0-9]-*.sh))
 
 all: $(T)
 
+prove:
+	prove --exec '$(SHELL_PATH_SQ)' $(PROVE_OPTS) $(T)
+
 $(T):
 	@'$(SHELL_PATH_SQ)' $@
 
-.PHONY: all $(T)
+.PHONY: all prove $(T)
