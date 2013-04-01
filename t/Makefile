@@ -11,4 +11,4 @@ all: $(T)
 $(T):
 	@'$(SHELL_PATH_SQ)' $@
 
-.PHONY: $(T)
+.PHONY: all $(T)
