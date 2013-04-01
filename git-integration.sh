@@ -185,11 +185,31 @@ do_base () {
 	current_insn=
 }
 
+dedent () {
+	local message indent
+	# Strip leading blank lines.
+	message=$(IFS=
+		while read -r line
+		do
+			test -z "$line" && continue
+			printf '%s\n' "$line"
+			break
+		done
+		cat
+	)
+	indent=$(echo "$message" | sed -n -e '1 {
+		s/^\([ 	]*\).*$/\1/
+		p
+		q
+	}')
+	echo "$message" | sed -e "s/^$indent//"
+}
+
 finalize_command () {
 	first_line=$(echo "$1" | sed -n -e 1p)
 	test -n "$first_line" || return 0
 
-	message=$(echo "$1" | sed -e 1d)
+	message=$(echo "$1" | sed -e 1d | dedent)
 	cmd=${first_line%% *}
 	args=${first_line#* }
 	case "$cmd" in

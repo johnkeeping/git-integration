@@ -36,13 +36,13 @@ test_expect_success 'check branches merged' '
 test_expect_success 'check branch2 merge message' '
 	git cat-file commit HEAD | sed -e "1,/^\$/ d" >message &&
 	grep "branch .branch2. into pu" message &&
-	grep "This merges branch 2" message
+	grep "^This merges branch 2" message
 '
 
 test_expect_success 'check branch1 merge message' '
 	git cat-file commit HEAD^ | sed -e "1,/^\$/ d" >message &&
 	grep "branch .branch1. into pu" message &&
-	grep "This merges branch 1" message
+	grep "^This merges branch 1" message
 '
 
 test_done
