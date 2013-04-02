@@ -111,7 +111,7 @@ Commands:
 EOF
 	} >"$edit_file"
 
-	git_editor "$edit_file" || edit
+	git_editor "$edit_file" || die
 
 	cat "$edit_file" |
 	git stripspace --strip-comments |
