@@ -41,6 +41,12 @@ integration branch.
 If no branch name is specified then the current branch must be an existing
 integration branch.
 
+--add=<branch>::
+	Appends a line `merge <branch>` to the instruction list, causing that
+	branch to be included in the integration branch when it is next
+	rebuilt.  This option may be specified multiple times to add multiple
+	branches.
+
 --continue::
 	Restart the building process after having resolved a merge conflict.
 
@@ -48,9 +54,9 @@ integration branch.
 	Abort the rebuild operation and reset HEAD to the original branch.
 
 If `--continue` or `--abort` are specified then no other options may be given.
-Otherwise at least one of `--create`, `--edit` or `--rebuild` must be
+Otherwise at least one of `--create`, `--add`, `--edit` or `--rebuild` must be
 specified.  If more than one is specified then they will be performed in the
-order 'create', 'edit', 'rebuild'.
+order 'create', 'add', 'edit', 'rebuild'.
 
 CONFIGURATION
 -------------

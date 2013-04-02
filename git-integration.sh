@@ -17,6 +17,8 @@ edit!      edit the instruction sheet for a branch
 rebuild    rebuild an integration branch
 abort!     abort an in-progress rebuild
 continue!  continue an in-progress rebuild
+ Inline actions:
+add=       appends a 'merge <branch>' line to the instruction sheet
 "
 . git-sh-setup
 set_reflog_action integration
@@ -82,6 +84,8 @@ integration_create () {
 
 integration_edit () {
 	branch=$1
+	manual_edit=${2=1}
+	append_branches=$3
 
 	ref=$(integration_ref $branch)
 
@@ -92,7 +96,12 @@ integration_edit () {
 
 	{
 		git cat-file blob $ref:GIT-INTEGRATION-INSN &&
-		echo
+		if test -n "$append_branches"
+		then
+			echo "$append_branches" |
+			sed -e '/^$/d' -e 's/^/\nmerge /'
+		fi
+		echo &&
 		git stripspace --comment-lines <<EOF 
 
 Format:
@@ -111,7 +120,10 @@ Commands:
 EOF
 	} >"$edit_file"
 
-	git_editor "$edit_file" || die
+	if test "$manual_edit" != 0
+	then
+		git_editor "$edit_file" || die
+	fi
 
 	cat "$edit_file" |
 	git stripspace --strip-comments |
@@ -293,6 +305,7 @@ action=
 do_create=0
 do_edit=0
 do_rebuild=auto
+branches_to_add=
 
 total_argc=$#
 while test $# != 0
@@ -315,6 +328,12 @@ do
 		test $total_argc -eq 2 || usage
 		action=${1##--}
 		;;
+	--add)
+		shift
+		git rev-parse --quiet --verify "$1^{commit}" ||
+		die "not a valid commit: $1"
+		branches_to_add="$branches_to_add$1$LF"
+		;;
 	--)
 		shift
 		break
@@ -328,7 +347,10 @@ done
 
 if test -n "$action"
 then
-	test $do_create != 1 && test $do_edit != 1 && test $do_rebuild != 1 || usage
+	test $do_create != 1 &&
+	test $do_edit != 1 &&
+	test $do_rebuild != 1 &&
+	test -z "$branches_to_add" || usage
 fi
 
 case $action in
@@ -346,7 +368,10 @@ case $action in
 		;;
 esac
 
-test $do_create = 1 || test $do_edit = 1 || test $do_rebuild = 1 || usage
+test $do_create = 1 ||
+test $do_edit = 1 ||
+test $do_rebuild = 1 ||
+test -n "$branches_to_add" || usage
 
 branch=
 if test $do_create = 1
@@ -388,9 +413,9 @@ fi
 
 test $# = 0 || usage
 
-if test $do_edit = 1
+if test $do_edit = 1 || test -n "$branches_to_add"
 then
-	integration_edit "$branch"
+	integration_edit "$branch" $do_edit "$branches_to_add"
 fi
 
 if test $do_rebuild = auto
