@@ -1,5 +1,7 @@
 base master
 
+merge update-sharness
+
 merge t-prove-target
 
 merge dedent-commentary
