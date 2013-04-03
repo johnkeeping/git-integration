@@ -35,7 +35,7 @@ html: $(MAN_HTML)
 
 doc: man html
 
-install:
+install: man
 	$(INSTALL) -d '$(DESTDIR_SQ)$(man1dir_SQ)'
 	$(INSTALL) -m 644 $(DOC_MAN1) '$(DESTDIR)$(man1dir_SQ)'
 
