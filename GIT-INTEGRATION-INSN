@@ -5,3 +5,5 @@ merge t-prove-target
 merge dedent-commentary
 
 merge add-option
+
+merge pass-no-log-to-merge
