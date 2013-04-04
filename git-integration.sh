@@ -167,7 +167,7 @@ do_merge () {
 		printf '\n%s\n' "$message"
 	) || die "failed to create message for merge commit"
 	echo "Merging branch ${branch_to_merge}..."
-	git merge --quiet --no-ff -m "$merge_msg" $branch_to_merge ||
+	git merge --quiet --no-log --no-ff -m "$merge_msg" $branch_to_merge ||
 	break_integration
 	merged="$merged$branch_to_merge$LF"
 }
