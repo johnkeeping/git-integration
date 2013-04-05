@@ -5,7 +5,7 @@ __git_integration_branches () {
 	sed -e 's!^refs/insns/!!'
 }
 
-__git_integration_options="--create --edit --rebuild --continue --abort"
+__git_integration_options="--create --add= --edit --rebuild --continue --abort"
 
 _git_integration () {
 	# Disable default filename completion.  Note that "compopt" is only
@@ -14,10 +14,21 @@ _git_integration () {
 	type compopt >/dev/null 2>&1 && compopt +o default +o bashdefault
 
 	case "$cur" in
+	--add=*)
+		__gitcomp_nl "$(__git_refs)" "" "${cur##--add=}"
+		return
+		;;
 	-*)
 		__gitcomp "$__git_integration_options"
 		return
+		;;
 	esac
+
+	if test "$prev" = "--add"
+	then
+		__gitcomp_nl "$(__git_refs)"
+		return
+	fi
 
 	local i found_command=0 found_create=0 nargs=0
 	for ((i=0; i < ${cword}; i++)); do
