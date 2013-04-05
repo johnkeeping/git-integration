@@ -33,7 +33,8 @@ will be used.
 If no branch name is specified then the current branch must be an existing
 integration branch.
 
---rebuild, --no-rebuild::
+--rebuild::
+--no-rebuild::
 	Rebuild the integration branch.  The --no-rebuild form exists to
 	suppress automatic rebuilding if the `integration.autorebuild`
 	configuration variable is set.
