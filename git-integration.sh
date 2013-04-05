@@ -350,7 +350,7 @@ do
 		;;
 	--add)
 		shift
-		git rev-parse --quiet --verify "$1^{commit}" ||
+		git rev-parse --quiet --verify "$1^{commit}" >/dev/null ||
 		die "not a valid commit: $1"
 		branches_to_add="$branches_to_add$1$LF"
 		;;
