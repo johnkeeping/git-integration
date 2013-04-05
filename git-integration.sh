@@ -23,6 +23,7 @@ git integration (--continue | --abort)
 create!    create a new integration branch
 edit!      edit the instruction sheet for a branch
 rebuild    rebuild an integration branch
+cat!       show the instruction sheet for a branch
 status!    show the status of a branch
 abort!     abort an in-progress rebuild
 continue!  continue an in-progress rebuild
@@ -529,6 +530,7 @@ action=
 do_create=0
 do_edit=0
 do_rebuild=auto
+do_cat=0
 do_status=0
 branches_to_add=
 need_rebuild=0
@@ -550,6 +552,9 @@ do
 		;;
 	--no-rebuild)
 		do_rebuild=0
+		;;
+	--cat)
+		do_cat=1
 		;;
 	--status)
 		do_status=1
@@ -588,6 +593,7 @@ then
 	test $do_create != 1 &&
 	test $do_edit != 1 &&
 	test $do_rebuild != 1 &&
+	test $do_cat != 1 &&
 	test -z "$branches_to_add" || usage
 fi
 
@@ -609,6 +615,7 @@ esac
 test $do_create = 1 ||
 test $do_edit = 1 ||
 test $do_rebuild = 1 ||
+test $do_cat = 1 ||
 test -n "$branches_to_add" || do_status=1
 
 branch=
@@ -654,6 +661,11 @@ test $# = 0 || usage
 if test $do_edit = 1 || test -n "$branches_to_add"
 then
 	integration_edit "$branch" $do_edit "$branches_to_add"
+fi
+
+if test $do_cat = 1
+then
+	git cat-file blob "$(integration_ref "$branch"):GIT-INTEGRATION-INSN"
 fi
 
 if test $do_rebuild = auto && test $need_rebuild = 1

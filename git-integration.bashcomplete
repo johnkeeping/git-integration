@@ -9,6 +9,7 @@ __git_integration_options="\
 --create
 --add=
 --edit
+--cat
 --rebuild
 --no-rebuild
 --status

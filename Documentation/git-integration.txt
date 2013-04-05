@@ -42,6 +42,11 @@ integration branch.
 If no branch name is specified then the current branch must be an existing
 integration branch.
 
+--cat::
+	Print the instruction sheet for the integration branch.  If this is
+	combined with options which modify the instruction sheet, then those
+	operations will be performed before it is printed.
+
 --status::
 	Prints the status of the integration branch.  See the STATUS FORMAT
 	section below.
@@ -64,9 +69,9 @@ integration branch.
 	conflicts during a merge.
 
 If `--continue` or `--abort` are specified then no other options may be given.
-Otherwise at least one of `--create`, `--add`, `--edit` or `--rebuild` must be
-specified.  If more than one is specified then they will be performed in the
-order 'create', 'add', 'edit', 'rebuild', 'status'.
+Otherwise at least one of `--create`, `--add`, `--edit`, `--cat` or
+`--rebuild` must be specified.  If more than one is specified then they will
+be performed in the order 'create', 'add', 'edit', 'cat', 'rebuild', 'status'.
 
 CONFIGURATION
 -------------
