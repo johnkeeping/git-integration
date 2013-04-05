@@ -36,16 +36,9 @@ test_expect_success 'conflict in last branch resolved' '
 	test_must_fail git merge-base --is-ancestor branch2 HEAD &&
 	echo resolved >base &&
 	git add base &&
-	git integration --continue &&
-	git merge-base --is-ancestor branch2 HEAD
-'
-
-test_expect_failure 'continue should not print "skipping ..."' '
-	test_must_fail git integration --rebuild &&
-	echo resolved >base &&
-	git add base &&
-	git integration --continue >actual &&
-	! grep -i skip actual
+	git integration --continue >output &&
+	git merge-base --is-ancestor branch2 HEAD &&
+	grep branch2 output
 '
 
 test_expect_success 'conflict in last branch try continue when unresolved' '
@@ -55,8 +48,9 @@ test_expect_success 'conflict in last branch try continue when unresolved' '
 	test_must_fail git integration --continue &&
 	echo resolved >base &&
 	git add base &&
-	git integration --continue &&
-	git merge-base --is-ancestor branch2 HEAD
+	git integration --continue >output &&
+	git merge-base --is-ancestor branch2 HEAD &&
+	grep branch2 output
 '
 
 test_expect_success 'conflict in last branch and abort' '
@@ -90,9 +84,11 @@ test_expect_success 'conflict in middle branch' '
 	test_must_fail git merge-base --is-ancestor branch2 HEAD &&
 	echo resolved >base &&
 	git add base &&
-	git integration --continue &&
+	git integration --continue >output &&
 	git merge-base --is-ancestor branch2 HEAD &&
-	git merge-base --is-ancestor branch3 HEAD
+	git merge-base --is-ancestor branch3 HEAD &&
+	grep branch2 output &&
+	grep branch3 output
 '
 
 test_done
