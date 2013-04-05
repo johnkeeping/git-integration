@@ -218,6 +218,8 @@ dedent () {
 }
 
 finalize_command () {
+	local IFS
+	IFS=" 	$LF"
 	first_line=$(echo "$1" | sed -n -e 1p)
 	test -n "$first_line" || return 0
 
