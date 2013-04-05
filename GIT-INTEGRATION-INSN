@@ -3,3 +3,5 @@ base master
 merge show-command
 
 merge autocontinue-feature
+
+merge fix-doc-formatting
