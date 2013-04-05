@@ -5,3 +5,5 @@ merge dedent-commentary
 merge improve-continue-output
 
 merge add-option
+
+merge improve-continue-output
