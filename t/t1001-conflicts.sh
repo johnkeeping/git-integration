@@ -40,6 +40,14 @@ test_expect_success 'conflict in last branch resolved' '
 	git merge-base --is-ancestor branch2 HEAD
 '
 
+test_expect_failure 'continue should not print "skipping ..."' '
+	test_must_fail git integration --rebuild &&
+	echo resolved >base &&
+	git add base &&
+	git integration --continue >actual &&
+	! grep -i skip actual
+'
+
 test_expect_success 'conflict in last branch try continue when unresolved' '
 	test_must_fail git integration --rebuild &&
 	git merge-base --is-ancestor branch1 HEAD &&
