@@ -152,7 +152,7 @@ do_merge () {
 
 	if test "$skip_commit" = "$(git rev-parse --quiet $branch_to_merge)"
 	then
-		echo "Skipping branch $branch_to_merge"
+		echo "Merged branch ${branch_to_merge}."
 		merged="$merged$branch_to_merge$LF"
 		return
 	fi
