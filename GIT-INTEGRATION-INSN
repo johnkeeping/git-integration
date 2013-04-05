@@ -2,4 +2,6 @@ base master
 
 merge dedent-commentary
 
+merge improve-continue-output
+
 merge add-option
