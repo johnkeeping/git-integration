@@ -353,6 +353,7 @@ do_create=0
 do_edit=0
 do_rebuild=auto
 branches_to_add=
+need_rebuild=0
 
 total_argc=$#
 while test $# != 0
@@ -360,9 +361,11 @@ do
 	case "$1" in
 	--create)
 		do_create=1
+		need_rebuild=1
 		;;
 	--edit)
 		do_edit=1
+		need_rebuild=1
 		;;
 	--rebuild)
 		do_rebuild=1
@@ -380,6 +383,7 @@ do
 		git rev-parse --quiet --verify "$1^{commit}" >/dev/null ||
 		die "not a valid commit: $1"
 		branches_to_add="$branches_to_add$1$LF"
+		need_rebuild=1
 		;;
 	--autocontinue)
 		autocontinue=true
@@ -471,7 +475,7 @@ then
 	integration_edit "$branch" $do_edit "$branches_to_add"
 fi
 
-if test $do_rebuild = auto
+if test $do_rebuild = auto && test $need_rebuild = 1
 then
 	test "$(git config --bool --get integration.autorebuild)" = true &&
 	do_rebuild=1
