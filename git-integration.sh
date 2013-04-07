@@ -405,7 +405,7 @@ then
 	then
 		base=master
 	else
-		base=$2
+		base=$1
 		shift
 		git rev-parse --quiet --verify "$base^{commit}" >/dev/null ||
 		die "no such branch: $base"
