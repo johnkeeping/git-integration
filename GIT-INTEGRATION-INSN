@@ -1,5 +1,3 @@
 base master
 
 merge show-command
-
-merge autocontinue-feature
