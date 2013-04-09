@@ -54,6 +54,11 @@ integration branch.
 --abort::
 	Abort the rebuild operation and reset HEAD to the original branch.
 
+--autocontinue::
+--no-autocontinue::
+	Continues automatically if the rerere mechanism manages to resolve all
+	conflicts during a merge.
+
 If `--continue` or `--abort` are specified then no other options may be given.
 Otherwise at least one of `--create`, `--add`, `--edit` or `--rebuild` must be
 specified.  If more than one is specified then they will be performed in the
@@ -61,6 +66,9 @@ order 'create', 'add', 'edit', 'rebuild'.
 
 CONFIGURATION
 -------------
+
+integration.autocontinue
+	Sets the default for the `--autocontinue` option.
 
 integration.autorebuild
 	Automatically rebuild the integration branch after creating/editing it

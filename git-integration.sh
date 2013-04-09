@@ -19,6 +19,8 @@ abort!     abort an in-progress rebuild
 continue!  continue an in-progress rebuild
  Inline actions:
 add=       appends a 'merge <branch>' line to the instruction sheet
+ Options:
+autocontinue  continues automatically if rerere resolves all conflicts
 "
 . git-sh-setup
 set_reflog_action integration
@@ -35,11 +37,15 @@ _x40="$_x40$_x40$_x40$_x40$_x40$_x40$_x40$_x40"
 comment_char=$(git config --get core.commentchar 2>/dev/null | cut -c1)
 : ${comment_char:=#}
 
+autocontinue=$(git config --bool integration.autocontinue)
+: ${autocontinue:=false}
+
 state_dir="$GIT_DIR/integration"
 start_file="$state_dir/start-point"
 head_file="$state_dir/head-name"
 merged_file="$state_dir/merged"
 insns="$state_dir/git-integration-insn"
+
 
 integration_ref () {
 	local branch
@@ -178,9 +184,24 @@ do_merge () {
 		git stripspace --strip-comments &&
 		printf '\n%s\n' "$message"
 	) || die "failed to create message for merge commit"
+
+	merge_opts="--quiet --no-log --no-ff"
+	if test "$autocontinue" = "true"
+	then
+		merge_opts="$merge_opts --rerere-autoupdate"
+	fi
+
 	echo "Merging branch ${branch_to_merge}..."
-	git merge --quiet --no-log --no-ff -m "$merge_msg" $branch_to_merge ||
-	break_integration
+	if ! git merge $merge_opts -m "$merge_msg" $branch_to_merge
+	then
+		if test "$autocontinue" = "true" &&
+		   test -z "$(git ls-files --unmerged)"
+		then
+			git commit --no-edit --no-verify || break_integration
+		else
+			break_integration
+		fi
+	fi
 	merged="$merged$branch_to_merge$LF"
 }
 
@@ -218,6 +239,8 @@ dedent () {
 }
 
 finalize_command () {
+	local IFS
+	IFS=" 	$LF"
 	first_line=$(echo "$1" | sed -n -e 1p)
 	test -n "$first_line" || return 0
 
@@ -353,6 +376,12 @@ do
 		git rev-parse --quiet --verify "$1^{commit}" >/dev/null ||
 		die "not a valid commit: $1"
 		branches_to_add="$branches_to_add$1$LF"
+		;;
+	--autocontinue)
+		autocontinue=true
+		;;
+	--no-autocontinue)
+		autocontinue=false
 		;;
 	--)
 		shift
