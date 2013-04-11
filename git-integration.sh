@@ -215,7 +215,6 @@ do_base () {
 	echo "Resetting to base ${base}..."
 	git reset --quiet --hard "$base" ||
 	break_integration "Failed to reset to base $base"
-	current_insn=
 }
 
 dedent () {
