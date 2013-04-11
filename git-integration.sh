@@ -54,7 +54,7 @@ integration_ref () {
 }
 
 write_insn_sheet () {
-	local ref parent
+	local ref parent insn_blob insn_tree op insn_commit
 	ref=$1
 	parent=$(git rev-parse --quiet --verify $ref)
 
@@ -164,7 +164,7 @@ finish_integration () {
 }
 
 do_merge () {
-	local merge_msg to_strip
+	local brance_to_merge merge_msg merge_opts
 	branch_to_merge=$1
 	test -n "$branch_to_merge" || break_integration
 
@@ -241,9 +241,11 @@ dedent () {
 finalize_command () {
 	local IFS
 	IFS=" 	$LF"
+	local first_line
 	first_line=$(echo "$1" | sed -n -e 1p)
 	test -n "$first_line" || return 0
 
+	local message cmd args
 	message=$(echo "$1" | sed -e 1d | dedent)
 	cmd=${first_line%% *}
 	args=${first_line#* }
@@ -261,7 +263,7 @@ finalize_command () {
 }
 
 run_integration () {
-	local IFS
+	local IFS merged skip_commit
 	merged=$1
 	skip_commit=$2
 	current_insn=
@@ -285,6 +287,7 @@ run_integration () {
 }
 
 integration_rebuild () {
+	local branch orig_head ref
 	branch=$1
 	require_clean_work_tree integrate "Please commit or stash them."
 
@@ -311,6 +314,7 @@ integration_rebuild () {
 
 integration_abort () {
 	test $# = 0 || usage
+	local branch
 	branch=$(cat "$head_file") ||
 	die "No integration in progress."
 
@@ -322,6 +326,7 @@ integration_abort () {
 integration_continue () {
 	test $# = 0 || usage
 
+	local branch skip_commit merged
 	branch=$(cat "$head_file") ||
 	die "No integration in progress."
 
