@@ -1,3 +1,7 @@
 base master
 
 merge show-command
+
+merge code-tidying
+
+merge status-command
