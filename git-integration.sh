@@ -105,6 +105,70 @@ dedent () {
 	echo "$message" | sed -e "s/^$indent//"
 }
 
+# Helper function used in for_each_insn.  This extracts the command,
+# arguments and message from the full command block before calling the
+# insn_cmd with each of those as a separate argument.
+#
+# $1 - insn_cmd to be run for each instruction.
+# $2 - message to be parsed and split.
+#
+# Returns the exit code of insn_cmd.
+run_insn_command () {
+	local IFS
+	IFS=" 	$LF"
+
+	local insn_cmd first_line message cmd args
+	insn_cmd=$1
+
+	first_line=$(echo "$2" | sed -n -e 1p)
+	test -n "$first_line" || return 0
+
+	local message cmd args
+	message=$(echo "$2" | sed -e 1d | dedent)
+	cmd=${first_line%% *}
+	args=${first_line#* }
+
+	$insn_cmd "$cmd" "$args" "$message"
+}
+
+# Run a command for each instruction read from stdin.  The input is a
+# git-integration instruction sheet which is split into instructions.
+#
+# insn_cmd is called once for each instruction, with the parameters "cmd",
+# "args", "message" where:
+#
+# - cmd is the command in the instruction sheet
+# - args is the remainder of the command line
+# - message is the indented message following the command
+#
+# Processing ends early if insn_cmd returns a non-zero exit code for any
+# instruction.
+#
+# $1 - insn_cmd to run for each instruction.
+#
+# Returns the exit code of insn_cmd.
+for_each_insn () {
+	local cmd
+	insn_cmd=$1
+	current_insn=
+	IFS=
+	while read -r line
+	do
+		case "$line" in
+		''|' '*|'	'*)
+			: # Blank or indented line.
+			;;
+		*)
+			# New command, finish the previous one.
+			run_insn_command "$insn_cmd" "$current_insn" || return
+			current_insn=
+			;;
+		esac
+		current_insn="$current_insn$line$LF"
+	done
+	run_insn_command "$insn_cmd" "$current_insn"
+}
+
 integration_create () {
 	branch=$1
 	base=$2
@@ -248,16 +312,10 @@ do_base () {
 }
 
 finalize_command () {
-	local IFS
-	IFS=" 	$LF"
-	local first_line
-	first_line=$(echo "$1" | sed -n -e 1p)
-	test -n "$first_line" || return 0
-
-	local message cmd args
-	message=$(echo "$1" | sed -e 1d | dedent)
-	cmd=${first_line%% *}
-	args=${first_line#* }
+	local cmd args message
+	cmd=$1
+	args=$2
+	message=$3
 	case "$cmd" in
 	base)
 		eval "do_base $args"
@@ -275,23 +333,7 @@ run_integration () {
 	local IFS merged skip_commit
 	merged=$1
 	skip_commit=$2
-	current_insn=
-	IFS=
-	while read -r line
-	do
-		case "$line" in
-		''|' '*|'	'*)
-			: # Blank or indented line.
-			;;
-		*)
-			# New command, finish the previous one.
-			finalize_command "$current_insn"
-			current_insn=
-			;;
-		esac
-		current_insn="$current_insn$line$LF"
-	done
-	finalize_command "$current_insn"
+	for_each_insn finalize_command
 	finish_integration
 }
 
