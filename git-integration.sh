@@ -27,7 +27,11 @@ set_reflog_action integration
 require_work_tree_exists
 cd_to_toplevel
 
-test -n "$GIT_INTEGRATION_DEBUG" && set -x
+if test -n "$GIT_INTEGRATION_DEBUG"
+then
+	set -x
+	PS4='+ $(basename "$0"):$LINENO: '
+fi
 
 LF='
 '
