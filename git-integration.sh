@@ -360,7 +360,7 @@ integration_rebuild () {
 	git cat-file blob $ref:GIT-INTEGRATION-INSN >"$insns" ||
 	die "Failed to read instruction list for branch ${branch#refs/heads/}"
 
-	cat "$insns" | run_integration
+	cat "$insns" | run_integration || die
 }
 
 integration_abort () {
