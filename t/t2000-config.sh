@@ -38,4 +38,14 @@ test_expect_success 'create integration branch with --no-rebuild' '
 	test_must_fail git merge-base --is-ancestor branch2 HEAD
 '
 
+test_expect_success 'auto-rebuild does not trigger with --status' '
+	test_config integration.autorebuild true &&
+	GIT_COMMITTER_DATE="1112911993 +0000" git integration --rebuild &&
+	git rev-parse --quiet --verify HEAD >expect &&
+	GIT_COMMITTER_DATE="1112912053 +0000" git integration --status &&
+	git rev-parse --quiet --verify HEAD >actual &&
+	test_cmp expect actual
+
+'
+
 test_done
