@@ -10,8 +10,11 @@ __git_integration_options="\
 --add=
 --edit
 --rebuild
+--no-rebuild
 --continue
 --abort
+--autocontinue
+--no-autocontinue
 "
 
 _git_integration () {
