@@ -79,6 +79,32 @@ write_insn_sheet () {
 	die "Failed to update instruction sheet reference"
 }
 
+# De-indents its argument based on the indentation of its first content line.
+# Leading blank lines are stripped.
+#
+# $1 - message to be de-indented
+#
+# Prints to stdout the message after removing indentation.
+dedent () {
+	local message indent
+	# Strip leading blank lines.
+	message=$(IFS=
+		while read -r line
+		do
+			test -z "$line" && continue
+			printf '%s\n' "$line"
+			break
+		done
+		cat
+	)
+	indent=$(echo "$message" | sed -n -e '1 {
+		s/^\([ 	]*\).*$/\1/
+		p
+		q
+	}')
+	echo "$message" | sed -e "s/^$indent//"
+}
+
 integration_create () {
 	branch=$1
 	base=$2
@@ -219,26 +245,6 @@ do_base () {
 	echo "Resetting to base ${base}..."
 	git reset --quiet --hard "$base" ||
 	break_integration "Failed to reset to base $base"
-}
-
-dedent () {
-	local message indent
-	# Strip leading blank lines.
-	message=$(IFS=
-		while read -r line
-		do
-			test -z "$line" && continue
-			printf '%s\n' "$line"
-			break
-		done
-		cat
-	)
-	indent=$(echo "$message" | sed -n -e '1 {
-		s/^\([ 	]*\).*$/\1/
-		p
-		q
-	}')
-	echo "$message" | sed -e "s/^$indent//"
 }
 
 finalize_command () {
