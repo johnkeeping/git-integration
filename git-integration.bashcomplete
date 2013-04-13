@@ -5,7 +5,14 @@ __git_integration_branches () {
 	sed -e 's!^refs/insns/!!'
 }
 
-__git_integration_options="--create --add= --edit --rebuild --continue --abort"
+__git_integration_options="\
+--create
+--add=
+--edit
+--rebuild
+--continue
+--abort
+"
 
 _git_integration () {
 	# Disable default filename completion.  Note that "compopt" is only
