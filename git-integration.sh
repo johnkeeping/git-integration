@@ -314,7 +314,7 @@ integration_rebuild () {
 integration_abort () {
 	test $# = 0 || usage
 	local branch
-	branch=$(cat "$head_file") ||
+	branch=$(cat "$head_file" 2>/dev/null) ||
 	die "No integration in progress."
 
 	git reset --hard $branch &&
@@ -326,7 +326,7 @@ integration_continue () {
 	test $# = 0 || usage
 
 	local branch skip_commit merged
-	branch=$(cat "$head_file") ||
+	branch=$(cat "$head_file" 2>/dev/null) ||
 	die "No integration in progress."
 
 	if test -f "$GIT_DIR/MERGE_HEAD"
