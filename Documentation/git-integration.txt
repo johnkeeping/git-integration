@@ -9,7 +9,7 @@ SYNOPSIS
 --------
 [verse]
 'git integration' --create <name> [<base>]
-'git integration' [--edit] [--rebuild] [<branch>]
+'git integration' [<action>...] [<branch>]
 'git integration' --continue | --abort
 
 DESCRIPTION

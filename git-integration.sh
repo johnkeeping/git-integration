@@ -7,8 +7,7 @@ SUBDIRECTORY_OK=Yes
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
 git integration --create <name> [<base>]
-git integration --edit [--create] [<branch>]
-git integration --rebuild [<branch>]
+git integration [<action>...] [<branch>]
 git integration --continue | --abort
 --
  Actions:
