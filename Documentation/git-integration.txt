@@ -67,10 +67,10 @@ order 'create', 'add', 'edit', 'rebuild'.
 CONFIGURATION
 -------------
 
-integration.autocontinue
+integration.autocontinue::
 	Sets the default for the `--autocontinue` option.
 
-integration.autorebuild
+integration.autorebuild::
 	Automatically rebuild the integration branch after creating/editing it
 	if --no-rebuild is not specified.
 
