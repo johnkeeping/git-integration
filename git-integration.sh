@@ -8,7 +8,7 @@ OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
 git integration --create <name> [<base>]
 git integration [<action>...] [<branch>]
-git integration --continue | --abort
+git integration (--continue | --abort)
 --
  Actions:
 create!    create a new integration branch
