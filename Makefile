@@ -78,7 +78,9 @@ gh-pages:
 	git read-tree gh-pages && \
 	git checkout-index --prefix=gh-pages/ --all && \
 	$(ASCIIDOC) --conf Documentation/site.asciidoc.conf -b html5 \
-		--out-file=gh-pages/index.html Documentation/index.txt
+		--out-file=gh-pages/index.html Documentation/index.txt && \
+	$(ASCIIDOC) --conf Documentation/site.asciidoc.conf -b html5 -d manpage \
+		--out-file=gh-pages/git-integration.html Documentation/git-integration.txt
 
 commit-gh-pages: gh-pages
 	GIT_INDEX_FILE=.git/gh-pages.index && \
@@ -86,6 +88,8 @@ commit-gh-pages: gh-pages
 	git read-tree gh-pages && \
 	blob=$$(git hash-object -w gh-pages/index.html) && \
 	git update-index --add --cacheinfo 100644 $$blob index.html && \
+	blob=$$(git hash-object -w gh-pages/git-integration.html) && \
+	git update-index --add --cacheinfo 100644 $$blob git-integration.html && \
 	oldtree=$$(git rev-parse --verify gh-pages^{tree}) && \
 	tree=$$(git write-tree) && \
 	( \
@@ -95,4 +99,4 @@ commit-gh-pages: gh-pages
 		git update-ref refs/heads/gh-pages $$commit; } \
 	)
 
-.PHONY: gh-pages
+.PHONY: commit-gh-pages gh-pages
