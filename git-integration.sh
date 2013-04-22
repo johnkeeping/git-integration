@@ -3,6 +3,15 @@
 # Copyright (C) 2013  John Keeping
 # Licensed under the GNU GPL version 2.
 
+# If we haven't been called via Git, see if we can tweak $PATH so
+# that we can find the git-sh-setup script when we need it later.
+if ! type git-sh-setup >/dev/null 2>&1
+then
+	exec_path=$(git --exec-path) || die 'Git not found!'
+	PATH="$exec_path:$PATH"
+	export PATH
+fi
+
 SUBDIRECTORY_OK=Yes
 OPTIONS_KEEPDASHDASH=
 OPTIONS_SPEC="\
