@@ -10,7 +10,7 @@ SYNOPSIS
 [verse]
 'git integration' --create <name> [<base>]
 'git integration' [<action>...] [<branch>]
-'git integration' (--continue | --abort)
+'git integration' (--continue | --skip | --abort)
 
 DESCRIPTION
 -----------
@@ -59,6 +59,9 @@ integration branch.
 
 --continue::
 	Restart the building process after having resolved a merge conflict.
+
+--skip::
+	Restart the building process by skipping the current merge.
 
 --abort::
 	Abort the rebuild operation and reset HEAD to the original branch.

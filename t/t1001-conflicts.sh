@@ -53,6 +53,14 @@ test_expect_success 'conflict in last branch try continue when unresolved' '
 	grep branch2 output
 '
 
+test_expect_success 'conflict in last branch skipped' '
+	test_must_fail git integration --rebuild &&
+	git merge-base --is-ancestor branch1 HEAD &&
+	test_must_fail git merge-base --is-ancestor branch2 HEAD &&
+	git integration --skip &&
+	! git merge-base --is-ancestor branch2 HEAD
+'
+
 test_expect_success 'conflict in last branch and abort' '
 	git checkout pu &&
 	git reset --hard master &&
