@@ -1,20 +1,21 @@
 base master
 
+merge abort-dont-touch-other-branches
+
 merge show-command
 
-  I'm not sure about this.  Should it be --cat instead of --show?  It is
+  I'm not sure about this.  Should it be --cat instead of --show?  Is it
   too similar to --status below?
 
 merge status-command
 
-  Still needs some tests, but seems to be working nicely.  It would be
-  nice to have some flags for different verbosity of output, but that
-  isn't needed for the first version of this.
+  It would be nice to have some flags for different verbosity of output,
+  but that isn't needed for the first version of this.
 
 merge skip-option
 
-merge run-not-via-git
+  Needs more work to be able to handle "branch not found".
 
 merge manpage-on-site
 
-merge abort-dont-touch-other-branches
+  WIP to improve the web site
