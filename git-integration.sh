@@ -329,8 +329,8 @@ integration_abort () {
 	branch=$(cat "$head_file" 2>/dev/null) ||
 	die "No integration in progress."
 
-	git reset --hard $branch &&
 	git symbolic-ref HEAD $branch &&
+	git reset --hard $branch &&
 	rm -rf "$state_dir"
 }
 

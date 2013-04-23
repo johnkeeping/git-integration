@@ -70,6 +70,17 @@ test_expect_success 'conflict in last branch and abort' '
 	test_must_fail git merge-base --is-ancestor branch2 HEAD
 '
 
+test_expect_success 'abort does not move other branches' '
+	git checkout pu &&
+	git reset --hard master &&
+	git rev-parse --verify branch1 >expect &&
+	test_must_fail git integration --rebuild &&
+	git checkout --force branch1 &&
+	git integration --abort &&
+	git rev-parse --verify branch1 >actual &&
+	test_cmp expect actual
+'
+
 write_script .git/EDITOR <<\EOF
 #!/bin/sh
 cat >>"$1" <<EOM
