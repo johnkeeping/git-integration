@@ -291,13 +291,18 @@ finish_integration () {
 }
 
 do_merge () {
-	local branch_to_merge merge_msg merge_opts
+	local branch_to_merge rev merge_msg merge_opts
 	branch_to_merge=$1
 	shift
 
 	test -n "$branch_to_merge" || break_integration
 
-	if test "$skip_commit" = "$(git rev-parse --quiet $branch_to_merge)"
+	rev=$(git rev-parse --quiet --verify $branch_to_merge) || {
+		echo >&2 "No such revision: $branch_to_merge"
+		break_integration
+	}
+
+	if test "$skip_commit" = "$rev"
 	then
 		echo "Merged branch ${branch_to_merge}."
 		merged="$merged$branch_to_merge$LF"
@@ -305,9 +310,7 @@ do_merge () {
 	fi
 
 	merge_msg=$(
-		printf '%s\t\tbranch %s' \
-			$(git rev-parse --quiet --verify $branch_to_merge) \
-			$branch_to_merge |
+		printf '%s\t\tbranch %s' $rev $branch_to_merge |
 		git fmt-merge-msg --log --message \
 			"Merge branch '$branch_to_merge' into ${branch#refs/heads/}" |
 		git stripspace --strip-comments &&
