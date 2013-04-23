@@ -16,3 +16,5 @@ merge skip-option
 merge run-not-via-git
 
 merge manpage-on-site
+
+merge abort-dont-touch-other-branches
