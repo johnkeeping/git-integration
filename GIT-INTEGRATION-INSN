@@ -11,8 +11,8 @@ merge status-command
   nice to have some flags for different verbosity of output, but that
   isn't needed for the first version of this.
 
+merge skip-option
+
 merge run-not-via-git
 
 merge manpage-on-site
-
-merge skip-option
