@@ -1,7 +1,5 @@
 base master
 
-merge abort-dont-touch-other-branches
-
 merge show-command
 
   I'm not sure about this.  Should it be --cat instead of --show?  Is it
