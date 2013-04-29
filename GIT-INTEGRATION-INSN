@@ -5,11 +5,6 @@ merge show-command
   I'm not sure about this.  Should it be --cat instead of --show?  Is it
   too similar to --status below?
 
-merge status-command
-
-  It would be nice to have some flags for different verbosity of output,
-  but that isn't needed for the first version of this.
-
 merge skip-option
 
   Needs more work to be able to handle "branch not found".
