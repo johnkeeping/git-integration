@@ -42,6 +42,10 @@ integration branch.
 If no branch name is specified then the current branch must be an existing
 integration branch.
 
+--status::
+	Prints the status of the integration branch.  See the STATUS FORMAT
+	section below.
+
 --add=<branch>::
 	Appends a line `merge <branch>` to the instruction list, causing that
 	branch to be included in the integration branch when it is next
@@ -62,7 +66,7 @@ integration branch.
 If `--continue` or `--abort` are specified then no other options may be given.
 Otherwise at least one of `--create`, `--add`, `--edit` or `--rebuild` must be
 specified.  If more than one is specified then they will be performed in the
-order 'create', 'add', 'edit', 'rebuild'.
+order 'create', 'add', 'edit', 'rebuild', 'status'.
 
 CONFIGURATION
 -------------
@@ -104,6 +108,47 @@ merge my-site-specific-changes
 
   Some changes to suit my environment.  DO NOT SUBMIT THESE.
 ------
+
+STATUS FORMAT
+-------------
+
+Each branch included in an integration branch can have one of four states:
+
+Merged to base::
+	meaning that the branch is included in the branch on which the
+	integration branch is based.  This branch can be removed from the
+	integration branch's instruction sheet without changing the content of
+	the branch.
+
+Up-to-date::
+	meaning that the branch is included in the integration branch but not
+	in the branch on which it is based and that the integration branch
+	contains all of the commits on the branch.
+
+Out-of-date::
+	meaning that the integration branch does not include all of the
+	commits on the branch, because either the integration branch has not
+	been rebuilt since this branch was added to its instruction sheet or
+	the branch has changed since the integration branch was last built.
+
+Not found::
+	meaning that the branch specified in the instruction sheet cannot be
+	found.  This may be because the branch does not exist or because it
+	has been deleted for some reason.  An integration branch containing
+	branches in this state cannot be rebuilt until the affected branches
+	are removed from the instruction sheet.
+
+These states are indicated by the character places before the branch, as well
+as a textual indicator following the branch name:
+
+------
++ merged-to-base  (merged to base)
+* up-to-date      (up-to-date)
+- out-of-date     (branch changed)
+. not-found       (branch not found)
+------
+
+The status output respects the 'color.status' Git configuration variable.
 
 SHARING INSTRUCTION SHEETS
 --------------------------

@@ -11,6 +11,7 @@ __git_integration_options="\
 --edit
 --rebuild
 --no-rebuild
+--status
 --continue
 --abort
 --autocontinue

@@ -23,6 +23,7 @@ git integration (--continue | --abort)
 create!    create a new integration branch
 edit!      edit the instruction sheet for a branch
 rebuild    rebuild an integration branch
+status!    show the status of a branch
 abort!     abort an in-progress rebuild
 continue!  continue an in-progress rebuild
  Inline actions:
@@ -85,6 +86,106 @@ write_insn_sheet () {
 
 	git update-ref $ref $insn_commit ${parent:-$_x40} ||
 	die "Failed to update instruction sheet reference"
+}
+
+# Helper function to extract the first word in a (potentially shell quoted)
+# string.  The normal usage is:
+#
+#	eval first_word $foo
+#
+# $1 - argument to be echoed
+first_word () {
+	echo "$1"
+}
+
+# De-indents its argument based on the indentation of its first content line.
+# Leading blank lines are stripped.
+#
+# $1 - message to be de-indented
+#
+# Prints to stdout the message after removing indentation.
+dedent () {
+	local message indent
+	# Strip leading blank lines.
+	message=$(IFS=
+		while read -r line
+		do
+			test -z "$line" && continue
+			printf '%s\n' "$line"
+			break
+		done
+		cat
+	)
+	indent=$(echo "$message" | sed -n -e '1 {
+		s/^\([ 	]*\).*$/\1/
+		p
+		q
+	}')
+	echo "$message" | sed -e "s/^$indent//"
+}
+
+# Helper function used in for_each_insn.  This extracts the command,
+# arguments and message from the full command block before calling the
+# insn_cmd with each of those as a separate argument.
+#
+# $1 - insn_cmd to be run for each instruction.
+# $2 - message to be parsed and split.
+#
+# Returns the exit code of insn_cmd.
+run_insn_command () {
+	local IFS
+	IFS=" 	$LF"
+
+	local insn_cmd first_line message cmd args
+	insn_cmd=$1
+
+	first_line=$(echo "$2" | sed -n -e 1p)
+	test -n "$first_line" || return 0
+
+	local message cmd args
+	message=$(echo "$2" | sed -e 1d | dedent)
+	cmd=${first_line%% *}
+	args=${first_line#* }
+
+	$insn_cmd "$cmd" "$args" "$message"
+}
+
+# Run a command for each instruction read from stdin.  The input is a
+# git-integration instruction sheet which is split into instructions.
+#
+# insn_cmd is called once for each instruction, with the parameters "cmd",
+# "args", "message" where:
+#
+# - cmd is the command in the instruction sheet
+# - args is the remainder of the command line
+# - message is the indented message following the command
+#
+# Processing ends early if insn_cmd returns a non-zero exit code for any
+# instruction.
+#
+# $1 - insn_cmd to run for each instruction.
+#
+# Returns the exit code of insn_cmd.
+for_each_insn () {
+	local cmd
+	insn_cmd=$1
+	current_insn=
+	IFS=
+	while read -r line
+	do
+		case "$line" in
+		''|' '*|'	'*)
+			: # Blank or indented line.
+			;;
+		*)
+			# New command, finish the previous one.
+			run_insn_command "$insn_cmd" "$current_insn" || return
+			current_insn=
+			;;
+		esac
+		current_insn="$current_insn$line$LF"
+	done
+	run_insn_command "$insn_cmd" "$current_insn"
 }
 
 integration_create () {
@@ -229,37 +330,11 @@ do_base () {
 	break_integration "Failed to reset to base $base"
 }
 
-dedent () {
-	local message indent
-	# Strip leading blank lines.
-	message=$(IFS=
-		while read -r line
-		do
-			test -z "$line" && continue
-			printf '%s\n' "$line"
-			break
-		done
-		cat
-	)
-	indent=$(echo "$message" | sed -n -e '1 {
-		s/^\([ 	]*\).*$/\1/
-		p
-		q
-	}')
-	echo "$message" | sed -e "s/^$indent//"
-}
-
 finalize_command () {
-	local IFS
-	IFS=" 	$LF"
-	local first_line
-	first_line=$(echo "$1" | sed -n -e 1p)
-	test -n "$first_line" || return 0
-
-	local message cmd args
-	message=$(echo "$1" | sed -e 1d | dedent)
-	cmd=${first_line%% *}
-	args=${first_line#* }
+	local cmd args message
+	cmd=$1
+	args=$2
+	message=$3
 	case "$cmd" in
 	base)
 		eval "do_base $args"
@@ -277,23 +352,7 @@ run_integration () {
 	local IFS merged skip_commit
 	merged=$1
 	skip_commit=$2
-	current_insn=
-	IFS=
-	while read -r line
-	do
-		case "$line" in
-		''|' '*|'	'*)
-			: # Blank or indented line.
-			;;
-		*)
-			# New command, finish the previous one.
-			finalize_command "$current_insn"
-			current_insn=
-			;;
-		esac
-		current_insn="$current_insn$line$LF"
-	done
-	finalize_command "$current_insn"
+	for_each_insn finalize_command
 	finish_integration
 }
 
@@ -320,7 +379,7 @@ integration_rebuild () {
 	git cat-file blob $ref:GIT-INTEGRATION-INSN >"$insns" ||
 	die "Failed to read instruction list for branch ${branch#refs/heads/}"
 
-	cat "$insns" | run_integration
+	cat "$insns" | run_integration || die
 }
 
 integration_abort () {
@@ -360,10 +419,117 @@ integration_continue () {
 	cat "$insns" | run_integration "$merged" "$skip_commit"
 }
 
+insn_branch_length () {
+	local cmd args message
+	cmd=$1
+	args=$2
+	message=$3
+
+	if test "$cmd" = merge
+	then
+		args=$(eval "first_word $args")
+		echo ${#args}
+	else
+		echo 0
+	fi
+}
+
+status_merge () {
+	local branch_to_merge
+	branch_to_merge=$1
+	if test -z "$branch_to_merge"
+	then
+		say >&2 "no branch specified with 'merge' command"
+		return
+	fi
+	test -n "$status_base" || status_base=master
+
+	if ! git rev-parse --verify --quiet "$branch_to_merge"^{commit} >/dev/null
+	then
+		state="$color_changed."
+		verbose_state="branch not found"
+	elif git merge-base --is-ancestor "$branch_to_merge" "$status_base"
+	then
+		state="$color_merged+"
+		verbose_state="merged to $status_base"
+	elif git-merge-base --is-ancestor "$branch_to_merge" "$branch"
+	then
+		state="$color_uptodate*"
+		verbose_state="up-to-date"
+	else
+		state="$color_changed-"
+		verbose_state="branch changed"
+	fi
+
+	local color
+	test -z "$use_color" || color='--color=always'
+	printf '%s %-*s%s(%s)\n' "$state" "$longest_branch" "$branch_to_merge" "$color_reset" "$verbose_state"
+	test -n "$message" && echo "$message" | sed -e 's/^./    &/'
+	echo
+	git --no-pager log --oneline $color --cherry "$status_base...$branch_to_merge" -- 2>/dev/null |
+	sed -e 's/^/  /' -e '$ a \
+'
+}
+
+insn_status () {
+	local cmd args message
+	cmd=$1
+	args=$2
+	message=$3
+
+	case "$cmd" in
+	base)
+		status_base=$args
+		;;
+	merge)
+		eval "status_merge $args"
+		;;
+	*)
+		say >&2 "unhandled command: $cmd $args"
+		;;
+	esac
+}
+
+integration_status () {
+	local branch ref insn_list
+	branch=$1
+
+	ref=$(integration_ref $branch) || die
+
+	insn_list=$(git cat-file blob $ref:GIT-INTEGRATION-INSN) ||
+	die "Failed to read instruction list for branch ${branch#refs/heads/}"
+
+	longest_branch=$(
+		echo "$insn_list" | for_each_insn insn_branch_length | (
+			max=0
+			while read -r len
+			do
+				test "$len" -gt "$max" && max=$len
+			done
+			echo "$max"
+		)
+	) || longest_branch=40
+	# Add two characters separation.
+	longest_branch=$(($longest_branch + 2))
+
+	local use_color color_merged color_uptodate color_changed color_reset
+	if git config --get-colorbool color.status
+	then
+		use_color=true
+		color_merged=$(git config --get-color color.integration.merged blue)
+		color_uptodate=$(git config --get-color color.integration.uptodate green)
+		color_changed=$(git config --get-color color.integration.changed red)
+		color_reset=$(git config --get-color '' reset)
+	fi
+
+	echo "$insn_list" | for_each_insn insn_status
+}
+
 action=
 do_create=0
 do_edit=0
 do_rebuild=auto
+do_status=0
 branches_to_add=
 need_rebuild=0
 
@@ -384,6 +550,9 @@ do
 		;;
 	--no-rebuild)
 		do_rebuild=0
+		;;
+	--status)
+		do_status=1
 		;;
 	--abort|--continue)
 		test -z "$action" || usage
@@ -440,7 +609,7 @@ esac
 test $do_create = 1 ||
 test $do_edit = 1 ||
 test $do_rebuild = 1 ||
-test -n "$branches_to_add" || usage
+test -n "$branches_to_add" || do_status=1
 
 branch=
 if test $do_create = 1
@@ -496,4 +665,9 @@ fi
 if test $do_rebuild = 1
 then
 	integration_rebuild "$branch"
+fi
+
+if test $do_status = 1
+then
+	integration_status "$branch"
 fi
