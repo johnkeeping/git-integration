@@ -279,6 +279,8 @@ finish_integration () {
 do_merge () {
 	local brance_to_merge merge_msg merge_opts
 	branch_to_merge=$1
+	shift
+
 	test -n "$branch_to_merge" || break_integration
 
 	if test "$skip_commit" = "$(git rev-parse --quiet $branch_to_merge)"
@@ -305,7 +307,7 @@ do_merge () {
 	fi
 
 	echo "Merging branch ${branch_to_merge}..."
-	if ! git merge $merge_opts -m "$merge_msg" $branch_to_merge
+	if ! git merge "$@" $merge_opts -m "$merge_msg" $branch_to_merge
 	then
 		if test "$autocontinue" = "true" &&
 		   test -z "$(git ls-files --unmerged)"

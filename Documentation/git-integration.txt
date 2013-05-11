@@ -89,10 +89,14 @@ base '<ref>'::
 	This should always be the first instruction in the instruction sheet,
 	and should appear only at the top of the instruction sheet.
 
-merge '<ref>'::
+merge '<ref>' '[<options>]'::
 	Merges the specified ref into the integration branch.  Any comments
 	following the instruction are appended to the merge commit's commit
 	message.
++
+If any options are given after the ref (and on the same line) then these are
+passed to 'git merge'.  This may be useful for specifying an alternative merge
+strategy for a branch.
 
 Example
 ~~~~~~~
