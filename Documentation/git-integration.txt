@@ -19,8 +19,8 @@ include::description.txt[]
 OPTIONS
 -------
 --create::
-	Create a new integration branch.  If '--edit' is also specified then
-	the instruction sheet will be opened for editing.  If '--rebuild' is
+	Create a new integration branch.  If `--edit` is also specified then
+	the instruction sheet will be opened for editing.  If `--rebuild` is
 	also specified then the branch will be built.
 +
 The name of the integration branch must be specified.  If a second positional
@@ -35,7 +35,7 @@ integration branch.
 
 --rebuild::
 --no-rebuild::
-	Rebuild the integration branch.  The --no-rebuild form exists to
+	Rebuild the integration branch.  The `--no-rebuild` form exists to
 	suppress automatic rebuilding if the `integration.autorebuild`
 	configuration variable is set.
 +
@@ -76,7 +76,7 @@ integration.autocontinue::
 
 integration.autorebuild::
 	Automatically rebuild the integration branch after creating/editing it
-	if --no-rebuild is not specified.
+	if `--no-rebuild` is not specified.
 
 FORMAT OF INSTRUCTIONS
 ----------------------
