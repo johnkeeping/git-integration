@@ -12,3 +12,5 @@ merge skip-option
 merge manpage-on-site
 
   WIP to improve the web site
+
+merge merge-options
