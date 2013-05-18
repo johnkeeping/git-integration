@@ -1,9 +1,6 @@
 base master
 
-merge show-command
-
-  I'm not sure about this.  Should it be --cat instead of --show?  Is it
-  too similar to --status below?
+merge cat-command
 
 merge skip-option
 
