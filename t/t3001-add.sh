@@ -11,16 +11,11 @@ test_expect_success 'setup branches' '
 	commit_file branch2 branch2
 '
 
-write_script .git/EDITOR <<\EOF
-#!/bin/sh
-cp "$1" INSTRUCTIONS
-EOF
-
 test_expect_success 'add one branch to an integration branch' '
 	git checkout master &&
 	git integration --create pu1 &&
 	GIT_EDITOR=false git integration --add branch1 &&
-	GIT_EDITOR=.git/EDITOR git integration --edit &&
+	git integration --cat >INSTRUCTIONS &&
 	grep "^merge branch1" INSTRUCTIONS &&
 	! grep "^merge branch2" INSTRUCTIONS
 '
@@ -28,7 +23,7 @@ test_expect_success 'add one branch to an integration branch' '
 test_expect_success 'add a branch during create' '
 	git checkout master &&
 	git integration --add branch2 --create pu2 &&
-	GIT_EDITOR=.git/EDITOR git integration --edit &&
+	git integration --cat >INSTRUCTIONS &&
 	! grep "^merge branch1" INSTRUCTIONS &&
 	grep "^merge branch2" INSTRUCTIONS
 '
@@ -37,7 +32,9 @@ test_expect_success 'add two branches and rebuild' '
 	git checkout master &&
 	git integration --create pu3 &&
 	GIT_EDITOR=false git integration --add branch1 --add branch2 --rebuild &&
-	GIT_EDITOR=.git/EDITOR git integration --edit &&
+	git integration --cat >INSTRUCTIONS &&
+	grep "^merge branch1" INSTRUCTIONS &&
+	grep "^merge branch2" INSTRUCTIONS &&
 	git merge-base --is-ancestor branch1 HEAD &&
 	git merge-base --is-ancestor branch2 HEAD
 '
