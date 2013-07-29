@@ -2,12 +2,13 @@
 
 SHELL_PATH ?= $(SHELL)
 PROVE ?= prove
+DEFAULT_TEST_TARGET ?= test
 
 SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
 
 T = $(sort $(wildcard t[0-9][0-9][0-9][0-9]-*.sh))
 
-all: test
+all: $(DEFAULT_TEST_TARGET)
 
 test: pre-clean
 	@$(MAKE) aggregate-results-and-cleanup
