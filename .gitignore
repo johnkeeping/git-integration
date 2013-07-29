@@ -9,3 +9,4 @@
 
 t/test-results/
 t/trash directory.*/
+t/.prove
