@@ -1,7 +1,7 @@
+-include ../config.mak
+
 SHELL_PATH ?= $(SHELL)
 PROVE ?= prove
-
--include ../config.mak
 
 SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
 
