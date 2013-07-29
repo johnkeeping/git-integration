@@ -39,4 +39,7 @@ install: man
 	$(INSTALL) -d '$(DESTDIR_SQ)$(man1dir_SQ)'
 	$(INSTALL) -m 644 $(DOC_MAN1) '$(DESTDIR)$(man1dir_SQ)'
 
-.PHONY: all install-doc doc man man1 html
+clean:
+	$(RM) $(DOC_MAN1) $(MAN_HTML)
+
+.PHONY: all clean install-doc doc man man1 html

@@ -68,7 +68,13 @@ install-completion:
 	$(INSTALL) -m 644 git-integration.bashcomplete \
 		'$(DESTDIR_SQ)$(bashcompletiondir_SQ)/git-integration'
 
-.PHONY: FORCE all test install install-doc install-completion doc man html
+clean:
+	$(RM) git-integration
+	$(RM) BUILD-VARS
+	$(MAKE) -C Documentation/ clean
+	$(MAKE) -C t/ clean
+
+.PHONY: FORCE all clean test install install-doc install-completion doc man html
 
 
 gh-pages:
