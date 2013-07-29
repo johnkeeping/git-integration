@@ -1,4 +1,4 @@
-SHELL_PATH ?= /bin/sh
+SHELL_PATH ?= $(SHELL)
 PROVE ?= prove
 
 -include ../config.mak
