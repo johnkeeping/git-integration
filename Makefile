@@ -1,3 +1,6 @@
+REL_VERSION = v0.1
+
+# The default target is...
 all::
 
 prefix = $(HOME)
@@ -12,6 +15,17 @@ INSTALL = install
 ifndef SHELL_PATH
 	SHELL_PATH = /bin/sh
 endif
+
+GIT-INTEGRATION-VERSION: FORCE
+	@VN=$$(git describe --match 'v[0-9]*' --dirty 2>/dev/null) || \
+	VN=$(REL_VERSION); \
+	VN=$${VN#v}; \
+	OLD=$$(sed -e 's/^GIT_INTEGRATION_VERSION = //' 2>/dev/null <$@); \
+	test x"$$VN" = x"$$OLD" || { \
+		echo >&2 "GIT_INTEGRATION_VERSION = $$VN"; \
+		echo "GIT_INTEGRATION_VERSION = $$VN" >$@; \
+	}
+-include GIT-INTEGRATION-VERSION
 
 -include config.mak
 
@@ -29,6 +43,7 @@ bindir_SQ = $(subst ','\'',$(bindir))
 bashcompletiondir_SQ = $(subst ','\'',$(bashcompletiondir))
 
 SHELL_PATH_SQ = $(subst ','\'',$(SHELL_PATH))
+GIT_INTEGRATION_VERSION_SQ = $(subst ','\'',$(GIT_INTEGRATION_VERSION))
 
 SHELL = $(SHELL_PATH)
 
@@ -43,8 +58,9 @@ BUILD-VARS: FORCE
 		mv $@+ $@; \
 	fi
 
-git-integration: git-integration.sh BUILD-VARS
-	$(QUIET_GEN)sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' $< >$@+ && \
+git-integration: git-integration.sh BUILD-VARS GIT-INTEGRATION-VERSION
+	$(QUIET_GEN)sed -e '1s|#!.*/sh|#!$(SHELL_PATH_SQ)|' \
+			-e 's|@@VERSION@@|$(GIT_INTEGRATION_VERSION_SQ)|' $< >$@+ && \
 	chmod +x $@+ && \
 	mv $@+ $@
 
@@ -70,7 +86,7 @@ install-completion:
 
 clean:
 	$(RM) git-integration
-	$(RM) BUILD-VARS
+	$(RM) BUILD-VARS GIT-INTEGRATION-VERSION
 	$(MAKE) -C Documentation/ clean
 	$(MAKE) -C t/ clean
 

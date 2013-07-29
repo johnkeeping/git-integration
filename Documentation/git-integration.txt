@@ -68,6 +68,9 @@ integration branch.
 	Continues automatically if the rerere mechanism manages to resolve all
 	conflicts during a merge.
 
+--version
+	Prints the version of 'git-integration' in use.
+
 If `--continue` or `--abort` are specified then no other options may be given.
 Otherwise at least one of `--create`, `--add`, `--edit`, `--cat` or
 `--rebuild` must be specified.  If more than one is specified then they will

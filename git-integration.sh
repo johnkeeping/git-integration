@@ -5,6 +5,8 @@
 
 # If we haven't been called via Git, see if we can tweak $PATH so
 # that we can find the git-sh-setup script when we need it later.
+GIT_INTEGRATION_VERSION='@@VERSION@@'
+
 if ! type git-sh-setup >/dev/null 2>&1
 then
 	exec_path=$(git --exec-path) || die 'Git not found!'
@@ -31,6 +33,7 @@ continue!  continue an in-progress rebuild
 add=       appends a 'merge <branch>' line to the instruction sheet
  Options:
 autocontinue  continues automatically if rerere resolves all conflicts
+version!      print the version of git-integration
 "
 . git-sh-setup
 set_reflog_action integration
@@ -60,6 +63,10 @@ head_file="$state_dir/head-name"
 merged_file="$state_dir/merged"
 insns="$state_dir/git-integration-insn"
 
+
+print_version () {
+	echo "git-integration version $GIT_INTEGRATION_VERSION"
+}
 
 integration_ref () {
 	local branch
@@ -578,6 +585,10 @@ do
 		;;
 	--no-autocontinue)
 		autocontinue=false
+		;;
+	--version)
+		print_version
+		exit
 		;;
 	--)
 		shift
