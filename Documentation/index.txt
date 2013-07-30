@@ -3,6 +3,8 @@ git-integration
 
 include::description.txt[]
 
+link:git-integration.html[Full Manual Page]
+
 INSTALL
 -------
 include::install.txt[]
