@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="AsciiDoc 8.6.8">
+<title>git-integration(1)</title>
+<link rel="stylesheet" href="slate/stylesheets/stylesheet.css" type="text/css">
+
+</head>
+<body class="manpage">
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <h1 id="project_title">git-integration(1) Manual Page</h1>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+        <section id="main_content" class="inner">
+            <h2>NAME</h2>
+            <p><a href="index.html">git-integration</a> - Manage integration branches in Git</p>
+<div class="sect1">
+<h2 id="_synopsis">SYNOPSIS</h2>
+<div class="sectionbody">
+<div class="verseblock">
+<pre class="content"><em>git integration</em> --create &lt;name&gt; [&lt;base&gt;]
+<em>git integration</em> [&lt;action&gt;&#8230;] [&lt;branch&gt;]
+<em>git integration</em> (--continue | --abort)</pre>
+<div class="attribution">
+</div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Use <em>git integration</em> to manage a branch which is the result of merging
+several in-progress topic branches onto a base branch.</p></div>
+<div class="paragraph"><p>Say you are developing several new features on the branches <em>feature-a</em>,
+<em>feature-b</em> and <em>feature-c</em>, while ongoing development is also happening on
+the <em>master</em> branch.  Using <em>git integration</em> you can view the result of
+merging all of the feature branches into <em>master</em> and keep that branch updated
+as all of these branches change.</p></div>
+<div class="paragraph"><p>So you start with the following:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>o---o master
+    |\
+    | o---o feature-a
+     \
+      o---o feature-b</pre>
+</div></div>
+<div class="paragraph"><p>when you create an integration branch including <em>feature-a</em> and <em>feature-b</em>:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>git integration --create integration master
+git integration --edit --rebuild</pre>
+</div></div>
+<div class="paragraph"><p>edit the instruction sheet to look like:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>base master
+merge feature-a
+merge feature-b</pre>
+</div></div>
+<div class="paragraph"><p>the result will be:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>o---o master
+    |\
+    | o---o feature-a
+    |\     \
+    | ------o---o integration
+     \         /
+      o---o---- feature-b</pre>
+</div></div>
+<div class="paragraph"><p>should further development then happen on <em>master</em>, rebuilding the integration
+branch:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>git integration --rebuild integration</pre>
+</div></div>
+<div class="paragraph"><p>will give the following result:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>o---o---o---o master
+    |        \
+    |       --o---o integration
+    |\     /     /
+    | o---o     /  feature-a
+     \         /
+      o---o---- feature-b</pre>
+</div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_options">OPTIONS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+--create
+</dt>
+<dd>
+<p>
+        Create a new integration branch.  If <code>--edit</code> is also specified then
+        the instruction sheet will be opened for editing.  If <code>--rebuild</code> is
+        also specified then the branch will be built.
+</p>
+<div class="paragraph"><p>The name of the integration branch must be specified.  If a second positional
+argument is specified then it is used as the base branch, otherwise &#8220;master&#8221;
+will be used.</p></div>
+</dd>
+<dt class="hdlist1">
+--edit
+</dt>
+<dd>
+<p>
+        Edit the instruction sheet for an integration branch.
+</p>
+<div class="paragraph"><p>If no branch name is specified then the current branch must be an existing
+integration branch.</p></div>
+</dd>
+<dt class="hdlist1">
+--rebuild
+</dt>
+<dt class="hdlist1">
+--no-rebuild
+</dt>
+<dd>
+<p>
+        Rebuild the integration branch.  The <code>--no-rebuild</code> form exists to
+        suppress automatic rebuilding if the <code>integration.autorebuild</code>
+        configuration variable is set.
+</p>
+<div class="paragraph"><p>If no branch name is specified then the current branch must be an existing
+integration branch.</p></div>
+</dd>
+<dt class="hdlist1">
+--cat
+</dt>
+<dd>
+<p>
+        Print the instruction sheet for the integration branch.  If this is
+        combined with options which modify the instruction sheet, then those
+        operations will be performed before it is printed.
+</p>
+</dd>
+<dt class="hdlist1">
+--status
+</dt>
+<dd>
+<p>
+        Prints the status of the integration branch.  See the STATUS FORMAT
+        section below.
+</p>
+</dd>
+<dt class="hdlist1">
+--add=&lt;branch&gt;
+</dt>
+<dd>
+<p>
+        Appends a line <code>merge &lt;branch&gt;</code> to the instruction list, causing that
+        branch to be included in the integration branch when it is next
+        rebuilt.  This option may be specified multiple times to add multiple
+        branches.
+</p>
+</dd>
+<dt class="hdlist1">
+--continue
+</dt>
+<dd>
+<p>
+        Restart the building process after having resolved a merge conflict.
+</p>
+</dd>
+<dt class="hdlist1">
+--abort
+</dt>
+<dd>
+<p>
+        Abort the rebuild operation and reset HEAD to the original branch.
+</p>
+</dd>
+<dt class="hdlist1">
+--autocontinue
+</dt>
+<dt class="hdlist1">
+--no-autocontinue
+</dt>
+<dd>
+<p>
+        Continues automatically if the rerere mechanism manages to resolve all
+        conflicts during a merge.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>--version
+        Prints the version of <em>git-integration</em> in use.</p></div>
+<div class="paragraph"><p>If <code>--continue</code> or <code>--abort</code> are specified then no other options may be given.
+Otherwise at least one of <code>--create</code>, <code>--add</code>, <code>--edit</code>, <code>--cat</code> or
+<code>--rebuild</code> must be specified.  If more than one is specified then they will
+be performed in the order <em>create</em>, <em>add</em>, <em>edit</em>, <em>cat</em>, <em>rebuild</em>, <em>status</em>.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+integration.autocontinue
+</dt>
+<dd>
+<p>
+        Sets the default for the <code>--autocontinue</code> option.
+</p>
+</dd>
+<dt class="hdlist1">
+integration.autorebuild
+</dt>
+<dd>
+<p>
+        Automatically rebuild the integration branch after creating/editing it
+        if <code>--no-rebuild</code> is not specified.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_format_of_instructions">FORMAT OF INSTRUCTIONS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The instruction sheet consists of a series of instructions which begin in
+column zero, each of which may be followed by indented comments.  The
+following instructions are supported:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+base <em>&lt;ref&gt;</em>
+</dt>
+<dd>
+<p>
+        Resets the state of the integration branch to the specified revision.
+        This should always be the first instruction in the instruction sheet,
+        and should appear only at the top of the instruction sheet.
+</p>
+</dd>
+<dt class="hdlist1">
+merge <em>&lt;ref&gt;</em> <em>[&lt;options&gt;]</em>
+</dt>
+<dd>
+<p>
+        Merges the specified ref into the integration branch.  Any comments
+        following the instruction are appended to the merge commit&#8217;s commit
+        message.
+</p>
+<div class="paragraph"><p>If any options are given after the ref (and on the same line) then these are
+passed to <em>git merge</em>.  This may be useful for specifying an alternative merge
+strategy for a branch.</p></div>
+</dd>
+</dl></div>
+<div class="sect2">
+<h3 id="_example">Example</h3>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>base master
+
+merge my-experimental-feature
+
+  I think this is a good idea, but want to dogfood it before I
+  decide whether to submit it upstream.
+
+merge my-site-specific-changes
+
+  Some changes to suit my environment.  DO NOT SUBMIT THESE.</pre>
+</div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_status_format">STATUS FORMAT</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Each branch included in an integration branch can have one of four states:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Merged to base
+</dt>
+<dd>
+<p>
+        meaning that the branch is included in the branch on which the
+        integration branch is based.  This branch can be removed from the
+        integration branch&#8217;s instruction sheet without changing the content of
+        the branch.
+</p>
+</dd>
+<dt class="hdlist1">
+Up-to-date
+</dt>
+<dd>
+<p>
+        meaning that the branch is included in the integration branch but not
+        in the branch on which it is based and that the integration branch
+        contains all of the commits on the branch.
+</p>
+</dd>
+<dt class="hdlist1">
+Out-of-date
+</dt>
+<dd>
+<p>
+        meaning that the integration branch does not include all of the
+        commits on the branch, because either the integration branch has not
+        been rebuilt since this branch was added to its instruction sheet or
+        the branch has changed since the integration branch was last built.
+</p>
+</dd>
+<dt class="hdlist1">
+Not found
+</dt>
+<dd>
+<p>
+        meaning that the branch specified in the instruction sheet cannot be
+        found.  This may be because the branch does not exist or because it
+        has been deleted for some reason.  An integration branch containing
+        branches in this state cannot be rebuilt until the affected branches
+        are removed from the instruction sheet.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>These states are indicated by the character places before the branch, as well
+as a textual indicator following the branch name:</p></div>
+<div class="listingblock">
+<div class="content monospaced">
+<pre>+ merged-to-base  (merged to base)
+* up-to-date      (up-to-date)
+- out-of-date     (branch changed)
+. not-found       (branch not found)</pre>
+</div></div>
+<div class="paragraph"><p>The status output respects the <em>color.status</em> Git configuration variable.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sharing_instruction_sheets">SHARING INSTRUCTION SHEETS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The instruction sheet is just another Git branch, except that it is under
+<em>refs/insns/</em> and not <em>refs/heads/</em>.  This means that they can be shared in
+the same way as other branches.</p></div>
+<div class="paragraph"><p>For example, to push the instruction sheet for <em>pu</em>:</p></div>
+<div class="literalblock">
+<div class="content monospaced">
+<pre>git push origin refs/insns/pu</pre>
+</div></div>
+</div>
+</div>
+        </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+        <footer class="inner">
+            <p class="copyright">git-integration &copy; 2013 <a href="https://github.com/johnkeeping">John Keeping</a></p>
+            <p>Using the <a href="https://github.com/jsncostello/slate">Slate theme</a>, built with
+                <a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a>.</p>
+Last updated 2013-07-30 16:29:46 BST
+        </footer>
+    </div>
+
+    </body>
+</html>
