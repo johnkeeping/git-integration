@@ -1,14 +1,8 @@
 base master
 
-merge make-clean
-
-  Add a "clean" target to the makefile.
-
 merge version
 
   Support for "--version" option.
-
-  N.B. this builds on "make-clean".
 
 merge skip-option
 
