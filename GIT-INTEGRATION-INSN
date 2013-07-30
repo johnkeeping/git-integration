@@ -1,9 +1,5 @@
 base master
 
-merge version
-
-  Support for "--version" option.
-
 merge skip-option
 
   Needs more work to be able to handle "branch not found".
