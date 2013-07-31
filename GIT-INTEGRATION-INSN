@@ -6,4 +6,4 @@ merge skip-option
 
 merge status-fixes
 
-  A few tweaks to the "--status" code.
+  A few style tweaks to the "--status" code.
