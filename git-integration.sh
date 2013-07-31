@@ -444,8 +444,11 @@ insn_branch_length () {
 	fi
 }
 
+# Show the status of a merge command in the instruction sheet.
+#
+# $1 - branch to be shown
 status_merge () {
-	local branch_to_merge
+	local branch_to_merge state verbose_state
 	branch_to_merge=$1
 	if test -z "$branch_to_merge"
 	then
