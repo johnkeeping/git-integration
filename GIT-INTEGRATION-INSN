@@ -3,3 +3,7 @@ base master
 merge skip-option
 
   Needs more work to be able to handle "branch not found".
+
+merge status-fixes
+
+  A few tweaks to the "--status" code.
