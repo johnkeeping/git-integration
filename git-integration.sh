@@ -284,6 +284,33 @@ finish_integration () {
 	echo "Successfully re-integrated ${branch#refs/heads/}."
 }
 
+# Apply a fixup to the tip commit on the integration branch.
+#
+# $1 - the revision to cherry-pick as the fixup
+do_fixup () {
+	local fixup_commit rev
+	fixup_commit=$1
+	shift
+
+	test -n "$fixup_commit" || break_integration
+
+	rev=$(git rev-parse --quiet --verify $fixup_commit^{commit}) || {
+		echo >&2 "No such revision: $fixup_commit"
+		break_integration
+	}
+
+	if test "$skip_commit" = "$rev"
+	then
+		echo "Fixed up with ${fixup_commit}."
+		return
+	fi
+
+	echo "Fixing up with $fixup_commit"
+	git cherry-pick --no-commit "$fixup_commit" &&
+	EDITOR=: git commit --amend -a ||
+	break_integration
+}
+
 do_merge () {
 	local brance_to_merge merge_msg merge_opts
 	branch_to_merge=$1
@@ -348,6 +375,9 @@ finalize_command () {
 	case "$cmd" in
 	base)
 		eval "do_base $args"
+		;;
+	fixup)
+		eval "do_fixup $args"
 		;;
 	merge)
 		eval "do_merge $args"
@@ -435,12 +465,120 @@ insn_branch_length () {
 	args=$2
 	message=$3
 
-	if test "$cmd" = merge
-	then
+	case "$cmd" in
+	fixup)
+		args=$(eval "first_word $args")
+		echo $((6 + ${#args}))
+		;;
+	merge)
 		args=$(eval "first_word $args")
 		echo ${#args}
-	else
+		;;
+	*)
 		echo 0
+		;;
+	esac
+}
+
+# Show the status of a fixup command in the instruction sheet.
+#
+# $1 - fixup ref
+status_fixup () {
+	local fixup_commit color state verbose_state
+	fixup_commit=$1
+
+	if test -z "$fixup_commit"
+	then
+		say >&2 "no revision specified with 'fixup' command"
+		return
+	fi
+	test -n "$status_base" || status_base=master
+
+	# Algorithm:
+	#   For each line added by the fixup commit
+	#     Find all commits from $status_base..$branch that touch file
+	#     Examine each commit to see if it adds the diff's '+' lines
+	git diff-tree -r -z "$fixup_commit" 2>/dev/null | (
+		perl -e '
+			my $last = undef;
+			my $first = 1;
+			$/ = "\0";
+			while (<STDIN>) {
+				if ($first) {
+					# First line is the revision.
+					$first = 0;
+					next;
+				}
+				chomp;
+				if (/^:/) {
+					if (defined($last)) {
+						print "$last\n";
+					}
+					next;
+				}
+				$last = $_;
+			}
+			if (defined($last)) {
+				print "$last\n";
+			}
+		' | (
+		while read -r filename
+		do
+			patterns=$(git diff-tree -r -p "$fixup_commit" -- "$filename" |
+				sed -ne '
+					# Do not process before the first hunk
+					/^@@/,$ {
+						/^\+/ {
+							# Escape BRE specials
+							s/[\\\^\*\$]/\\&/g
+							# Wrap the line in ^<TAB>...$
+							s/^\+/^	/
+							s/$/$/
+							p
+						}
+					}')
+			pattern_count=$(echo "$patterns" | wc -l)
+			git rev-list "$branch" -- "$filename" | (
+			found=1
+			while read -r rev
+			do
+				if test $pattern_count = $(
+					git blame -p "$rev" -- "$filename" |
+					grep "$patterns" |
+					wc -l)
+				then
+					found=0
+					break
+				fi
+			done
+			exit $found
+			) || exit 1
+		done
+		)
+	)
+	found=$?
+	if ! git rev-parse --verify --quiet "$fixup_commit"^{commit} >/dev/null
+	then
+		color="$color_changed"
+		state="."
+		verbose_state="commit not found"
+	elif test $found = 0
+	then
+		color="$color_uptodate"
+		state="*"
+		verbose_state="applied"
+	else
+		color="$color_changed"
+		state="-"
+		verbose_state="not found"
+	fi
+
+	printf '%s%s %sfixup %s%-*s%s(%s)\n' "$color" "$state" "$color_label" \
+		"$color" "$(($longest_branch - 6))" "$fixup_commit" \
+		"$color_reset" "$verbose_state"
+	if test -n "$message"
+	then
+		printf "%s\n" "$message" | sed -e 's/^./    &/'
 	fi
 }
 
@@ -526,6 +664,9 @@ insn_status () {
 	base)
 		: # Nothing to do
 		;;
+	fixup)
+		eval "status_fixup $args"
+		;;
 	merge)
 		eval "status_merge $args"
 		;;
@@ -564,6 +705,7 @@ integration_status () {
 		color_merged=$(git config --get-color color.integration.merged blue)
 		color_uptodate=$(git config --get-color color.integration.uptodate green)
 		color_changed=$(git config --get-color color.integration.changed red)
+		color_label=$(git config --get-color color.integration.label yellow)
 		color_reset=$(git config --get-color '' reset)
 	fi
 
