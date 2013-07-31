@@ -289,6 +289,33 @@ finish_integration () {
 	echo "Successfully re-integrated ${branch#refs/heads/}."
 }
 
+# Apply a fixup to the tip commit on the integration branch.
+#
+# $1 - the revision to cherry-pick as the fixup
+do_fixup () {
+	local fixup_commit rev
+	fixup_commit=$1
+	shift
+
+	test -n "$fixup_commit" || break_integration
+
+	rev=$(git rev-parse --quiet --verify $fixup_commit^{commit}) || {
+		echo >&2 "No such revision: $fixup_commit"
+		break_integration
+	}
+
+	if test "$skip_commit" = "$rev"
+	then
+		echo "Fixed up with ${fixup_commit}."
+		return
+	fi
+
+	echo "Fixing up with $fixup_commit"
+	git cherry-pick --no-commit "$fixup_commit" &&
+	EDITOR=: git commit --amend -a ||
+	break_integration
+}
+
 do_merge () {
 	local branch_to_merge merge_msg merge_opts
 	branch_to_merge=$1
@@ -357,6 +384,9 @@ finalize_command () {
 	case "$cmd" in
 	base)
 		eval "do_base $args"
+		;;
+	fixup)
+		eval "do_fixup $args"
 		;;
 	merge)
 		eval "do_merge $args"
@@ -447,12 +477,79 @@ insn_branch_length () {
 	args=$2
 	message=$3
 
-	if test "$cmd" = merge
-	then
+	case "$cmd" in
+	fixup)
+		args=$(eval "first_word $args")
+		echo $((6 + ${#args}))
+		;;
+	merge)
 		args=$(eval "first_word $args")
 		echo ${#args}
-	else
+		;;
+	*)
 		echo 0
+		;;
+	esac
+}
+
+# Show the status of a fixup command in the instruction sheet.
+#
+# $1 - fixup ref
+status_fixup () {
+	local fixup_commit color state verbose_state
+	fixup_commit=$1
+
+	if test -z "$fixup_commit"
+	then
+		say >&2 "no revision specified with 'fixup' command"
+		return
+	fi
+	test -n "$status_base" || status_base=master
+
+	if ! git rev-parse --verify --quiet "$fixup_commit"^{commit} >/dev/null
+	then
+		color="$color_changed"
+		state="."
+		verbose_state="commit not found"
+	elif test -z "$last_commit"
+	then
+		color="$color_changed"
+		state="?"
+		verbose_state="unknown"
+	elif (	GIT_INDEX_FILE=$(tempfile) &&
+		export GIT_INDEX_FILE &&
+		git read-tree --empty &&
+		git read-tree "$last_commit" &&
+		git format-patch -1 --stdout "$fixup_commit" | git apply --cached 2>/dev/null
+		result=$?
+		rm -f "$GIT_INDEX_FILE"
+		exit $result
+		)
+	then
+		# If the patch applies, the we probably haven't rebuilt since
+		# the fixup command was added to the instruction sheet.
+		color="$color_changed"
+		state="-"
+		verbose_state="not applied"
+	else
+		# The patch didn't apply, so let's assume that it has already
+		# been squashed in.  This isn't particularly robust since
+		# there are myriad other reasons why we may have a non-zero
+		# exit status from the previous condition, not least because a
+		# 3-way merge is required to cherry-pick the fixup.
+		#
+		# TODO: It would be nice to do better here...
+		color="$color_uptodate"
+		state="*"
+		verbose_state="applied"
+	fi
+
+	printf '%s%s %sfixup %s%-*s%s(%s)\n' "$color" "$state" "$color_label" \
+		"$color" "$(($longest_branch - 6))" "$fixup_commit" \
+		"$color_reset" "$verbose_state"
+	if test -n "$message"
+	then
+		printf "%s\n" "$message" | sed -e 's/^./    &/'
 	fi
 }
 
@@ -543,6 +640,9 @@ insn_status () {
 	base)
 		: # Nothing to do
 		;;
+	fixup)
+		eval "status_fixup $args"
+		;;
 	merge)
 		eval "status_merge $args"
 		;;
@@ -584,6 +684,7 @@ integration_status () {
 		color_merged=$(git config --get-color color.integration.merged blue)
 		color_uptodate=$(git config --get-color color.integration.uptodate green)
 		color_changed=$(git config --get-color color.integration.changed red)
+		color_label=$(git config --get-color color.integration.label yellow)
 		color_reset=$(git config --get-color '' reset)
 	fi
 

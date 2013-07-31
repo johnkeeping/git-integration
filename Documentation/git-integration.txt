@@ -106,6 +106,14 @@ If any options are given after the ref (and on the same line) then these are
 passed to 'git merge'.  This may be useful for specifying an alternative merge
 strategy for a branch.
 
++fixup+ '<ref>'::
+	Cherry-picks the specified commit into the integration branch,
+	squashing it into the last commit.
++
+This can be useful for fixing logical conflicts when merging branches which do
+not have semantic conflicts and keeping that fixup as part of the ``evil''
+merge which brings the branch into the integration branch.
+
 +.+ '<args...>'::
 	Ignores this command and its description.  This can be used to remove
 	a branch from the integration branch without needing to delete it and
@@ -168,6 +176,10 @@ as a textual indicator following the branch name:
 - out-of-date     (branch changed)
 . not-found       (branch not found)
 ------
+
+For `fixup` instructions, an additional ``fixup'' label is printed between the
+status character and the branch name.  Additionally, the labels change to
+``applied'' and ``not applied''.
 
 The status output respects the 'color.status' Git configuration variable.
 
