@@ -1,5 +1,12 @@
 base master
 
+merge fixup-instruction
+
+  The basic functionality is simple and working, but the --status output
+  is more interesting and I'm not convinced the current heuristic is
+  sufficiently robust.  The implementation in status_fixup could also
+  use some refactoring.
+
 merge skip-option
 
   Needs more work to be able to handle "branch not found".
