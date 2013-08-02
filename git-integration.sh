@@ -484,6 +484,17 @@ status_merge () {
 '
 }
 
+find_base () {
+	local cmd args
+	cmd=$1
+	args=$2
+
+	if test "$cmd" = base
+	then
+		echo "$args"
+	fi
+}
+
 insn_status () {
 	local cmd args message
 	cmd=$1
@@ -492,7 +503,7 @@ insn_status () {
 
 	case "$cmd" in
 	base)
-		status_base=$args
+		: # Nothing to do
 		;;
 	merge)
 		eval "status_merge $args"
@@ -534,6 +545,8 @@ integration_status () {
 		color_changed=$(git config --get-color color.integration.changed red)
 		color_reset=$(git config --get-color '' reset)
 	fi
+
+	status_base=$(echo "$insn_list" | for_each_insn find_base)
 
 	echo "$insn_list" | for_each_insn insn_status
 }
