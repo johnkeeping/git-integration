@@ -448,7 +448,7 @@ insn_branch_length () {
 #
 # $1 - branch to be shown
 status_merge () {
-	local branch_to_merge state verbose_state
+	local branch_to_merge commit_to_merge merge_candidates state verbose_state
 	branch_to_merge=$1
 	if test -z "$branch_to_merge"
 	then
@@ -457,10 +457,31 @@ status_merge () {
 	fi
 	test -n "$status_base" || status_base=master
 
+	commit_to_merge=$(git rev-parse --verify --quiet "$branch_to_merge"^{commit}) &&
+	merge_candidates=$(echo "$integration_commits" |
+			grep "$commit_to_merge\$" |
+			sed -e 's/ .*//') ||
+	merge_candidates=
+
+	if test -n "$merge_candidates"
+	then
+		# This is a little crude, in that we just take the first commit
+		# we found on the integration branch that has the target branch
+		# as a direct parent (checked by commit SHA-1).  It would be
+		# better to also check the commit message to make sure that
+		# the merge we've found is the one that uses the name in
+		# $branch_to_merge to refer to this parent.
+		last_commit=${merge_candidates%% *}
+		last_verbose=$(git rev-list -1 --date=short --format='%h, %ad' $merge_candidates |
+				( read -r line; cat ))
+	else
+		last_commit=
+	fi
+
 	if ! git rev-parse --verify --quiet "$branch_to_merge"^{commit} >/dev/null
 	then
 		state="$color_changed."
-		verbose_state="branch not found"
+		verbose_state="branch not found${last_commit:+ - was merged in $last_verbose}"
 	elif git merge-base --is-ancestor "$branch_to_merge" "$status_base"
 	then
 		state="$color_merged+"
@@ -468,10 +489,10 @@ status_merge () {
 	elif git-merge-base --is-ancestor "$branch_to_merge" "$branch"
 	then
 		state="$color_uptodate*"
-		verbose_state="up-to-date"
+		verbose_state="up-to-date${last_commit:+ - $last_verbose}"
 	else
 		state="$color_changed-"
-		verbose_state="branch changed"
+		verbose_state="branch changed${last_commit:+ - last merged in $last_verbose}"
 	fi
 
 	local color
@@ -548,6 +569,8 @@ integration_status () {
 
 	status_base=$(echo "$insn_list" | for_each_insn find_base)
 
+	integration_commits=$(git rev-list --reverse --first-parent --parents \
+				"$status_base".."$branch")
 	echo "$insn_list" | for_each_insn insn_status
 }
 
