@@ -40,6 +40,13 @@ test_expect_success 'add a second (out-of-date) branch' '
 	grep "^- branch2" actual
 '
 
+test_expect_success 'two up-to-date branches' '
+	git integration --rebuild pu &&
+	git integration --status >actual &&
+	grep "^\\* branch1" actual &&
+	grep "^\\* branch2" actual
+'
+
 test_expect_success 'branch merged to base' '
 	git checkout master &&
 	git merge --no-edit branch1 &&
