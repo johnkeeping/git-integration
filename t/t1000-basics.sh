@@ -67,4 +67,11 @@ test_expect_success 'add another branch and rebuild' '
 	test_cmp expect actual
 '
 
+test_expect_success 'do not create empty commits' '
+	git rev-parse --verify refs/insns/pu >expect &&
+	GIT_EDITOR=true git integration --edit &&
+	git rev-parse --verify refs/insns/pu >actual &&
+	test_cmp expect actual
+'
+
 test_done
