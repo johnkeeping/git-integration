@@ -10,6 +10,8 @@ merge walk-commits-in-status
   Show the SHA-1 of the merge which brings a branch into the integration
   branch in the --status output.
 
+  This appears to be broken and only work for the first merge!
+
 merge fixup-instruction
 
   The basic functionality is simple and working, but the --status output
