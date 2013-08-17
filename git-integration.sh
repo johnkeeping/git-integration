@@ -78,6 +78,7 @@ write_insn_sheet () {
 	local ref parent insn_blob insn_tree op insn_commit
 	ref=$1
 	parent=$(git rev-parse --quiet --verify $ref)
+	parent_tree=$(git rev-parse --quiet --verify $ref^{tree})
 
 	insn_blob=$(git hash-object -w --stdin) ||
 	die "Failed to write instruction sheet blob object"
@@ -85,6 +86,9 @@ write_insn_sheet () {
 	insn_tree=$(printf "100644 blob %s\t%s\n" $insn_blob GIT-INTEGRATION-INSN |
 		git mktree) ||
 	die "Failed to write instruction sheet tree object"
+
+	# If there isn't anything to commit, stop now.
+	test $insn_tree = $parent_tree && return
 
 	op=${parent:+Update}
 	: ${op:=Create}
