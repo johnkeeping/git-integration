@@ -289,7 +289,7 @@ finish_integration () {
 }
 
 do_merge () {
-	local brance_to_merge merge_msg merge_opts
+	local branch_to_merge merge_msg merge_opts
 	branch_to_merge=$1
 	shift
 
