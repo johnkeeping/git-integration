@@ -92,12 +92,12 @@ The instruction sheet consists of a series of instructions which begin in
 column zero, each of which may be followed by indented comments.  The
 following instructions are supported:
 
-base '<ref>'::
++base+ '<ref>'::
 	Resets the state of the integration branch to the specified revision.
 	This should always be the first instruction in the instruction sheet,
 	and should appear only at the top of the instruction sheet.
 
-merge '<ref>' '[<options>]'::
++merge+ '<ref>' '[<options>]'::
 	Merges the specified ref into the integration branch.  Any comments
 	following the instruction are appended to the merge commit's commit
 	message.
