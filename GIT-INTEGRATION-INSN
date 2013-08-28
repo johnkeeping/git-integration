@@ -1,13 +1,5 @@
 base master
 
-merge local-typo-fix
-
-  Typo fix for a variable name in a "local" statement.
-
-merge doc-formatting
-
-  A small tweak to documentation formatting.
-
 merge dot-instruction
 
   New instruction to temporarily ignore an entry in the instruction
