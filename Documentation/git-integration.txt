@@ -106,6 +106,15 @@ If any options are given after the ref (and on the same line) then these are
 passed to 'git merge'.  This may be useful for specifying an alternative merge
 strategy for a branch.
 
++.+ '<args...>'::
+	Ignores this command and its description.  This can be used to remove
+	a branch from the integration branch without needing to delete it and
+	its description from the instruction sheet.
++
+For example, if you need to remove a branch until it is in better shape but
+don't want to lose track of it, you can simply add ``. '' to the beginning of
+that branch's 'merge' line.
+
 Example
 ~~~~~~~
 ------

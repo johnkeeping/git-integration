@@ -32,6 +32,10 @@ merge branch1
 merge branch2
 
   This merges branch 2.
+
+. branch3
+
+  "branch3" is ignored for now.
 EOM
 EOF
 
@@ -40,6 +44,7 @@ test_expect_success 'add branches to integration branch' '
 	git integration --rebuild &&
 	git merge-base --is-ancestor branch1 HEAD &&
 	git merge-base --is-ancestor branch2 HEAD &&
+	test_must_fail git merge-base --is-ancestor branch3 HEAD &&
 	git log --merges --oneline | wc -l >actual &&
 	echo 2 >expect &&
 	test_cmp expect actual
