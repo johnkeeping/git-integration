@@ -4,6 +4,15 @@ merge local-typo-fix
 
   Typo fix for a variable name in a "local" statement.
 
+merge doc-formatting
+
+  A small tweak to documentation formatting.
+
+merge dot-command
+
+  New instruction to temporarily ignore an entry in the instruction
+  sheet.
+
 merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
