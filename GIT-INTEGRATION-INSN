@@ -8,7 +8,7 @@ merge doc-formatting
 
   A small tweak to documentation formatting.
 
-merge dot-command
+merge dot-instruction
 
   New instruction to temporarily ignore an entry in the instruction
   sheet.
