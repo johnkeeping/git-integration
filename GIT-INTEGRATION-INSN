@@ -1,5 +1,10 @@
 base master
 
+merge fix-bashcomplete-not-in-repo
+
+  Avoid an error message on stderr when using shell completion outside a
+  repository.
+
 merge dot-instruction
 
   New instruction to temporarily ignore an entry in the instruction
