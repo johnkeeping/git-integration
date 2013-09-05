@@ -1,15 +1,5 @@
 base master
 
-merge fix-bashcomplete-not-in-repo
-
-  Avoid an error message on stderr when using shell completion outside a
-  repository.
-
-merge remove-warning-on-create
-
-  Suppress a shell error message that doesn't affect the code's
-  behaviour but is unnecesarily scary.
-
 merge dot-instruction
 
   New instruction to temporarily ignore an entry in the instruction
