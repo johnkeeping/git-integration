@@ -1,7 +1,7 @@
 #!bash
 
 __git_integration_branches () {
-	git for-each-ref --format='%(refname)' refs/insns/ |
+	git for-each-ref --format='%(refname)' refs/insns/ 2>/dev/null |
 	sed -e 's!^refs/insns/!!'
 }
 
