@@ -88,7 +88,7 @@ write_insn_sheet () {
 	die "Failed to write instruction sheet tree object"
 
 	# If there isn't anything to commit, stop now.
-	test $insn_tree = $parent_tree && return
+	test "$insn_tree" = "$parent_tree" && return
 
 	op=${parent:+Update}
 	: ${op:=Create}
