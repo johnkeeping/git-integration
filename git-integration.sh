@@ -248,6 +248,7 @@ Commands:
 		instruction list should begin with a "base" command.
  merge		Merges the specified branch.  Extended comment lines are
 		added to the commit message for the merge.
+ .		The command is ignored.
 EOF
 	} >"$edit_file"
 
@@ -344,6 +345,10 @@ do_base () {
 	break_integration "Failed to reset to base $base"
 }
 
+do_dot () {
+	: no-op
+}
+
 finalize_command () {
 	local cmd args message
 	cmd=$1
@@ -355,6 +360,9 @@ finalize_command () {
 		;;
 	merge)
 		eval "do_merge $args"
+		;;
+	'.')
+		eval "do_dot $args"
 		;;
 	*)
 		break_integration "Unknown command: $cmd"
@@ -488,6 +496,11 @@ status_merge () {
 '
 }
 
+status_dot () {
+	printf '. %s\n' "$*"
+	test -n "$message" && echo "$message" | sed -e 's/^./    &/'
+}
+
 insn_status () {
 	local cmd args message
 	cmd=$1
@@ -500,6 +513,9 @@ insn_status () {
 		;;
 	merge)
 		eval "status_merge $args"
+		;;
+	'.')
+		eval "status_dot $args"
 		;;
 	*)
 		say >&2 "unhandled command: $cmd $args"
