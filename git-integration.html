@@ -233,7 +233,7 @@ column zero, each of which may be followed by indented comments.  The
 following instructions are supported:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
-base <em>&lt;ref&gt;</em>
+<code>base</code> <em>&lt;ref&gt;</em>
 </dt>
 <dd>
 <p>
@@ -243,7 +243,7 @@ base <em>&lt;ref&gt;</em>
 </p>
 </dd>
 <dt class="hdlist1">
-merge <em>&lt;ref&gt;</em> <em>[&lt;options&gt;]</em>
+<code>merge</code> <em>&lt;ref&gt;</em> <em>[&lt;options&gt;]</em>
 </dt>
 <dd>
 <p>
@@ -254,6 +254,19 @@ merge <em>&lt;ref&gt;</em> <em>[&lt;options&gt;]</em>
 <div class="paragraph"><p>If any options are given after the ref (and on the same line) then these are
 passed to <em>git merge</em>.  This may be useful for specifying an alternative merge
 strategy for a branch.</p></div>
+</dd>
+<dt class="hdlist1">
+<code>.</code> <em>&lt;args&#8230;&gt;</em>
+</dt>
+<dd>
+<p>
+        Ignores this command and its description.  This can be used to remove
+        a branch from the integration branch without needing to delete it and
+        its description from the instruction sheet.
+</p>
+<div class="paragraph"><p>For example, if you need to remove a branch until it is in better shape but
+don&#8217;t want to lose track of it, you can simply add &#8216;`. <em>&#8217; to the beginning of
+that branch&#8217;s 'merge</em> line.</p></div>
 </dd>
 </dl></div>
 <div class="sect2">
@@ -358,7 +371,7 @@ the same way as other branches.</p></div>
             <p class="copyright">git-integration &copy; 2013 <a href="https://github.com/johnkeeping">John Keeping</a></p>
             <p>Using the <a href="https://github.com/jsncostello/slate">Slate theme</a>, built with
                 <a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a>.</p>
-Last updated 2013-07-30 16:29:46 BST
+Last updated 2013-09-29 18:10:15 BST
         </footer>
     </div>
 
