@@ -1,5 +1,9 @@
 base master
 
+merge reflog-improvments
+
+  Improve logging of actions in the reflog.
+
 merge prefix-option
 
   Add a way to apply a prefix (e.g. "origin/") to all refs in the
