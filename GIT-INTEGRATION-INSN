@@ -9,20 +9,20 @@ merge prefix-option
   Add a way to apply a prefix (e.g. "origin/") to all refs in the
   instructoin sheet.
 
-merge walk-commits-in-status
+. merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
   branch in the --status output.
 
   I'm not completely convinced that this is a good thing...
 
-merge fixup-instruction
+. merge fixup-instruction
 
   The basic functionality is simple and working, but the --status output
   is more interesting and I'm not convinced the current heuristic is
   sufficiently robust.  The implementation in status_fixup could also
   use some refactoring.
 
-merge skip-option
+. merge skip-option
 
   Needs more work to be able to handle "branch not found".
