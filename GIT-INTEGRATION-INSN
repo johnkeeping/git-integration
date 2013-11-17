@@ -1,14 +1,5 @@
 base master
 
-merge reflog-improvments
-
-  Improve logging of actions in the reflog.
-
-merge prefix-option
-
-  Add a way to apply a prefix (e.g. "origin/") to all refs in the
-  instructoin sheet.
-
 . merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
