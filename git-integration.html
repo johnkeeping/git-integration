@@ -192,9 +192,31 @@ integration branch.</p></div>
         conflicts during a merge.
 </p>
 </dd>
+<dt class="hdlist1">
+--prefix=&lt;prefix&gt;
+</dt>
+<dd>
+<p>
+        Prepend the specified string to each reference in the instruction
+        sheet while building the integration branch.  For example, if you have
+        pulled somebody else&#8217;s instruction sheet and it references branches
+        that you have fetched into the <code>refs/remotes/origin/</code> namespace, you
+        can use <code>--prefix=origin/</code> to avoid needing to re-write the
+        instruction sheet or import all of the refs into your local
+        <code>refs/heads/</code> namespace.
+</p>
+<div class="paragraph"><p>The prefix is treated as a simple string, so you probably want to include the
+trailing &#8220;/&#8221; if you are moving refs to a different namespace.</p></div>
+</dd>
+<dt class="hdlist1">
+--version
+</dt>
+<dd>
+<p>
+        Prints the version of <em>git-integration</em> in use.
+</p>
+</dd>
 </dl></div>
-<div class="paragraph"><p>--version
-        Prints the version of <em>git-integration</em> in use.</p></div>
 <div class="paragraph"><p>If <code>--continue</code> or <code>--abort</code> are specified then no other options may be given.
 Otherwise at least one of <code>--create</code>, <code>--add</code>, <code>--edit</code>, <code>--cat</code> or
 <code>--rebuild</code> must be specified.  If more than one is specified then they will
@@ -220,6 +242,14 @@ integration.autorebuild
 <p>
         Automatically rebuild the integration branch after creating/editing it
         if <code>--no-rebuild</code> is not specified.
+</p>
+</dd>
+<dt class="hdlist1">
+integration.prefix
+</dt>
+<dd>
+<p>
+        Sets the default arguments for the <code>--prefix</code> option.
 </p>
 </dd>
 </dl></div>
@@ -371,7 +401,7 @@ the same way as other branches.</p></div>
             <p class="copyright">git-integration &copy; 2013 <a href="https://github.com/johnkeeping">John Keeping</a></p>
             <p>Using the <a href="https://github.com/jsncostello/slate">Slate theme</a>, built with
                 <a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a>.</p>
-Last updated 2013-09-29 18:10:15 BST
+Last updated 2013-11-17 14:36:20 GMT
         </footer>
     </div>
 
