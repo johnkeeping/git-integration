@@ -68,6 +68,18 @@ integration branch.
 	Continues automatically if the rerere mechanism manages to resolve all
 	conflicts during a merge.
 
+--prefix=<prefix>::
+	Prepend the specified string to each reference in the instruction
+	sheet while building the integration branch.  For example, if you have
+	pulled somebody else's instruction sheet and it references branches
+	that you have fetched into the `refs/remotes/origin/` namespace, you
+	can use `--prefix=origin/` to avoid needing to re-write the
+	instruction sheet or import all of the refs into your local
+	`refs/heads/` namespace.
++
+The prefix is treated as a simple string, so you probably want to include the
+trailing ``/'' if you are moving refs to a different namespace.
+
 --version
 	Prints the version of 'git-integration' in use.
 
@@ -85,6 +97,9 @@ integration.autocontinue::
 integration.autorebuild::
 	Automatically rebuild the integration branch after creating/editing it
 	if `--no-rebuild` is not specified.
+
+integration.prefix::
+	Sets the default arguments for the `--prefix` option.
 
 FORMAT OF INSTRUCTIONS
 ----------------------

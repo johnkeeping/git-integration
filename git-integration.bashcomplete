@@ -5,6 +5,12 @@ __git_integration_branches () {
 	sed -e 's!^refs/insns/!!'
 }
 
+__git_integration_prefixes () {
+	git for-each-ref --format='%(refname)' refs/remotes/ 2>/dev/null |
+	sed -e 's!^refs/remotes/!!' -e 's!/.*$!/!' |
+	sort | uniq
+}
+
 __git_integration_options="\
 --create
 --add=
@@ -17,6 +23,7 @@ __git_integration_options="\
 --abort
 --autocontinue
 --no-autocontinue
+--prefix=
 "
 
 _git_integration () {
@@ -28,6 +35,10 @@ _git_integration () {
 	case "$cur" in
 	--add=*)
 		__gitcomp_nl "$(__git_refs)" "" "${cur##--add=}"
+		return
+		;;
+	--prefix=*)
+		__gitcomp_nl "$(__git_integration_prefixes)" "" "${cur##--prefix=}"
 		return
 		;;
 	-*)

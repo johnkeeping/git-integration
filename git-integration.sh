@@ -33,6 +33,7 @@ continue!  continue an in-progress rebuild
 add=       appends a 'merge <branch>' line to the instruction sheet
  Options:
 autocontinue  continues automatically if rerere resolves all conflicts
+prefix=       apply a prefix to each branch name when processing it
 version!      print the version of git-integration
 "
 . git-sh-setup
@@ -57,10 +58,13 @@ comment_char=$(git config --get core.commentchar 2>/dev/null | cut -c1)
 autocontinue=$(git config --bool integration.autocontinue)
 : ${autocontinue:=false}
 
+branch_prefix=$(git config --get integration.prefix 2>/dev/null)
+
 state_dir="$GIT_DIR/integration"
 start_file="$state_dir/start-point"
 head_file="$state_dir/head-name"
 merged_file="$state_dir/merged"
+prefix_file="$state_dir/prefix"
 insns="$state_dir/git-integration-insn"
 
 
@@ -204,9 +208,9 @@ integration_create () {
 	branch=$1
 	base=$2
 
-	git update-ref $branch $base $_x40 &&
+	git update-ref $branch "$branch_prefix$base" $_x40 &&
 
-	echo "base $base" |
+	echo "base ${base#$branch_prefix}" |
 	write_insn_sheet $(integration_ref $branch) &&
 	git checkout ${branch#refs/heads/} &&
 
@@ -297,6 +301,8 @@ do_merge () {
 
 	test -n "$branch_to_merge" || break_integration
 
+	branch_to_merge=$branch_prefix$branch_to_merge
+
 	if test "$skip_commit" = "$(git rev-parse --quiet $branch_to_merge)"
 	then
 		echo "Merged branch ${branch_to_merge}."
@@ -336,7 +342,7 @@ do_merge () {
 
 do_base () {
 	local base
-	base=$1
+	base=$branch_prefix$1
 	test -z "$merged" || {
 		echo >&2 "warning: dropping the following branches (resetting to base $base)"
 		cat "$merged" | sed -e 's/^/warning: /' >&2
@@ -399,6 +405,7 @@ integration_rebuild () {
 	die "Failed to create state directory"
 
 	echo $branch >"$head_file"
+	printf '%s\n' "$branch_prefix" >"$prefix_file"
 	git rev-parse --quiet --verify "$branch" >"$start_file"
 
 	git cat-file blob $ref:GIT-INTEGRATION-INSN >"$insns" ||
@@ -440,6 +447,7 @@ integration_continue () {
 	fi
 
 	merged=$(cat "$merged_file")
+	branch_prefix=$(cat "$prefix_file")
 
 	cat "$insns" | run_integration "$merged" "$skip_commit"
 }
@@ -452,7 +460,7 @@ insn_branch_length () {
 
 	if test "$cmd" = merge
 	then
-		args=$(eval "first_word $args")
+		args="$branch_prefix$(eval "first_word $args")"
 		echo ${#args}
 	else
 		echo 0
@@ -470,6 +478,7 @@ status_merge () {
 		say >&2 "no branch specified with 'merge' command"
 		return
 	fi
+	branch_to_merge="$branch_prefix$branch_to_merge"
 	test -n "$status_base" || status_base=master
 
 	if ! git rev-parse --verify --quiet "$branch_to_merge"^{commit} >/dev/null
@@ -512,7 +521,7 @@ insn_status () {
 
 	case "$cmd" in
 	base)
-		status_base=$args
+		status_base="$branch_prefix$args"
 		;;
 	merge)
 		eval "status_merge $args"
@@ -611,6 +620,10 @@ do
 		;;
 	--no-autocontinue)
 		autocontinue=false
+		;;
+	--prefix)
+		shift
+		branch_prefix=$1
 		;;
 	--version)
 		print_version
