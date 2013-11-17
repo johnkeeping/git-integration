@@ -282,8 +282,9 @@ EOF
 }
 
 finish_integration () {
-	git update-ref "$branch" HEAD $(cat "$start_file" 2>/dev/null) &&
-	git symbolic-ref HEAD "$branch" &&
+	git update-ref -m "$GIT_REFLOG_ACTION: rebuilt" \
+		"$branch" HEAD $(cat "$start_file" 2>/dev/null) &&
+	git symbolic-ref -m "$GIT_REFLOG_ACTION: complete" HEAD "$branch" &&
 	rm -rf "$state_dir" &&
 	git gc --auto &&
 	echo "Successfully re-integrated ${branch#refs/heads/}."
@@ -341,6 +342,7 @@ do_base () {
 		cat "$merged" | sed -e 's/^/warning: /' >&2
 	}
 	echo "Resetting to base ${base}..."
+	GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: resetting to base '$base'" \
 	git reset --quiet --hard "$base" ||
 	break_integration "Failed to reset to base $base"
 }
@@ -384,6 +386,7 @@ integration_rebuild () {
 	require_clean_work_tree integrate "Please commit or stash them."
 
 	orig_head=$(git rev-parse --quiet --verify "$branch^{commit}") || exit
+	GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: starting rebuild of $branch" \
 	git checkout --quiet "$branch^0" || die "could not detach HEAD"
 	git update-ref ORIG_HEAD $orig_head
 
@@ -410,7 +413,7 @@ integration_abort () {
 	branch=$(cat "$head_file" 2>/dev/null) ||
 	die "No integration in progress."
 
-	git symbolic-ref HEAD $branch &&
+	git symbolic-ref -m "$GIT_REFLOG_ACTION: aborted" HEAD $branch &&
 	git reset --hard $branch &&
 	rm -rf "$state_dir"
 }
