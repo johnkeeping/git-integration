@@ -80,7 +80,7 @@ integration branch.
 The prefix is treated as a simple string, so you probably want to include the
 trailing ``/'' if you are moving refs to a different namespace.
 
---version
+--version::
 	Prints the version of 'git-integration' in use.
 
 If `--continue` or `--abort` are specified then no other options may be given.
