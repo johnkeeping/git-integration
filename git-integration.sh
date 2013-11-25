@@ -668,6 +668,7 @@ then
 	IFS=$LF
 	for branch in $branches_to_add
 	do
+		branch="$branch_prefix$branch"
 		git rev-parse --quiet --verify "$branch^{commit}" >/dev/null ||
 		die "not a valid commit: $branch"
 	done
