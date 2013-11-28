@@ -1,9 +1,5 @@
 base master
 
-merge add-respect-prefix
-
-  Fix prefix handling when validating arguments to --add.
-
 . merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
