@@ -9,7 +9,9 @@ test_expect_success 'setup branches' '
 	git checkout -b sub/branch1 &&
 	commit_file base sub/branch1 &&
 	git checkout -b sub/branch2 sub/master &&
-	commit_file base sub/branch2
+	commit_file base sub/branch2 &&
+	git checkout -b sub/branch3 sub/master &&
+	commit_file base sub/branch3
 '
 
 write_script .git/EDITOR <<\EOF
@@ -53,6 +55,14 @@ test_expect_success 'status with prefix' '
 	test_config integration.prefix sub/ &&
 	git integration --status >actual &&
 	test_cmp output actual
+'
+
+test_expect_success 'add respects prefix' '
+	test_must_fail git integration --add=branch3 2>output &&
+	grep branch3 output &&
+	git integration --add=branch3 --prefix=sub/ &&
+	git integration --cat >output &&
+	! grep sub/ output
 '
 
 test_done

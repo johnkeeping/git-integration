@@ -610,8 +610,6 @@ do
 		;;
 	--add)
 		shift
-		git rev-parse --quiet --verify "$1^{commit}" >/dev/null ||
-		die "not a valid commit: $1"
 		branches_to_add="$branches_to_add$1$LF"
 		need_rebuild=1
 		;;
@@ -663,6 +661,19 @@ case $action in
 		die "Integration already in progress."
 		;;
 esac
+
+if test -n "$branches_to_add"
+then
+	ORIG_IFS=$IFS
+	IFS=$LF
+	for branch in $branches_to_add
+	do
+		branch="$branch_prefix$branch"
+		git rev-parse --quiet --verify "$branch^{commit}" >/dev/null ||
+		die "not a valid commit: $branch"
+	done
+	IFS=$ORIG_IFS
+fi
 
 test $do_create = 1 ||
 test $do_edit = 1 ||
