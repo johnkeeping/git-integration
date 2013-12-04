@@ -701,7 +701,7 @@ then
 
 	test $# = 0 || usage
 
-	integration_create "$branch" "$base"
+	integration_create "$branch" "$base" || exit
 else
 	if test $# = 0
 	then
@@ -723,12 +723,12 @@ test $# = 0 || usage
 
 if test $do_edit = 1 || test -n "$branches_to_add"
 then
-	integration_edit "$branch" $do_edit "$branches_to_add"
+	integration_edit "$branch" $do_edit "$branches_to_add" || exit
 fi
 
 if test $do_cat = 1
 then
-	git cat-file blob "$(integration_ref "$branch"):GIT-INTEGRATION-INSN"
+	git cat-file blob "$(integration_ref "$branch"):GIT-INTEGRATION-INSN" || exit
 fi
 
 if test $do_rebuild = auto && test $need_rebuild = 1
@@ -739,7 +739,7 @@ fi
 
 if test $do_rebuild = 1
 then
-	integration_rebuild "$branch"
+	integration_rebuild "$branch" || exit
 fi
 
 if test $do_status = 1
