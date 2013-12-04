@@ -4,6 +4,10 @@ merge stop-if-action-fails
 
   Fix handling of certain error scenarios.
 
+merge fix-git-detect-error
+
+  Don't use an undefined function if finding Git fails.
+
 . merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
