@@ -8,6 +8,14 @@ merge fix-git-detect-error
 
   Don't use an undefined function if finding Git fails.
 
+merge check-git-version
+
+  Avoid displaying a cryptic error message when the installed Git
+  version is too old and so does not support the --comment-lines option
+  to git-stripspace.
+
+  This may be better implemented as a sanity check in the makefile.
+
 . merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
