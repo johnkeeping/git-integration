@@ -9,7 +9,11 @@ GIT_INTEGRATION_VERSION='@@VERSION@@'
 
 if ! type git-sh-setup >/dev/null 2>&1
 then
-	exec_path=$(git --exec-path) || die 'Git not found!'
+	if ! exec_path=$(git --exec-path)
+	then
+		echo >&2 'Git not found!'
+		exit 1
+	fi
 	PATH="$exec_path:$PATH"
 	export PATH
 fi
