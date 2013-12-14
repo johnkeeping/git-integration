@@ -234,7 +234,8 @@ integration_edit () {
 		if test -n "$append_branches"
 		then
 			echo "$append_branches" |
-			sed -e '/^$/d' -e 's/^/\nmerge /'
+			sed -e '/^$/d' -e 's/^/\
+merge /'
 		fi
 		echo &&
 		git stripspace --comment-lines <<EOF 
