@@ -1,9 +1,5 @@
 base master
 
-merge handle-osx-wc-whitespace
-
-  Fix tests that rely on "wc -l" just printing a line count.
-
 merge bashcomplete-prefix
 
   Improve bash completion when a prefix is being applied to refs.
