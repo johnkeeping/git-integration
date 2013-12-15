@@ -7,6 +7,16 @@
 # that we can find the git-sh-setup script when we need it later.
 GIT_INTEGRATION_VERSION='@@VERSION@@'
 
+print_version () {
+	echo "git-integration version $GIT_INTEGRATION_VERSION"
+}
+
+if test "$1" = --version
+then
+	print_version
+	exit
+fi
+
 if ! type git-sh-setup >/dev/null 2>&1
 then
 	if ! exec_path=$(git --exec-path)
@@ -71,10 +81,6 @@ merged_file="$state_dir/merged"
 prefix_file="$state_dir/prefix"
 insns="$state_dir/git-integration-insn"
 
-
-print_version () {
-	echo "git-integration version $GIT_INTEGRATION_VERSION"
-}
 
 integration_ref () {
 	local branch
