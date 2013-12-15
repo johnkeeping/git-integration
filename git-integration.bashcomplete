@@ -32,26 +32,6 @@ _git_integration () {
 	# trying to use it.
 	type compopt >/dev/null 2>&1 && compopt +o default +o bashdefault
 
-	case "$cur" in
-	--add=*)
-		__gitcomp_nl "$(__git_refs)" "" "${cur##--add=}"
-		return
-		;;
-	--prefix=*)
-		__gitcomp_nl "$(__git_integration_prefixes)" "" "${cur##--prefix=}"
-		return
-		;;
-	-*)
-		__gitcomp "$__git_integration_options"
-		return
-		;;
-	esac
-
-	if test "$prev" = "--add"
-	then
-		__gitcomp_nl "$(__git_refs)"
-		return
-	fi
 
 	local i found_command=0 found_create=0 nargs=0
 	for ((i=0; i < ${cword}; i++)); do
@@ -72,6 +52,27 @@ _git_integration () {
 			;;
 		esac
 	done
+
+	case "$cur" in
+	--add=*)
+		__gitcomp_nl "$(__git_refs)" "" "${cur##--add=}"
+		return
+		;;
+	--prefix=*)
+		__gitcomp_nl "$(__git_integration_prefixes)" "" "${cur##--prefix=}"
+		return
+		;;
+	-*)
+		__gitcomp "$__git_integration_options"
+		return
+		;;
+	esac
+
+	if test "$prev" = "--add"
+	then
+		__gitcomp_nl "$(__git_refs)"
+		return
+	fi
 
 	case $found_create,$nargs in
 	0,0)
