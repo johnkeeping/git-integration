@@ -11,6 +11,40 @@ __git_integration_prefixes () {
 	sort | uniq
 }
 
+__git_integration_filter_prefix () {
+	if test -z "$branch_prefix"
+	then
+		cat
+		return
+	fi
+
+	local ref
+	while read -r ref
+	do
+		case "$ref" in
+		"$branch_prefix"*)
+			ref=${ref#$branch_prefix}
+			;;
+		refs/"$branch_prefix"*)
+			ref=${ref#refs/$branch_prefix}
+			;;
+		refs/tags/"$branch_prefix"*)
+			ref=${ref#refs/tags/$branch_prefix}
+			;;
+		refs/heads/"$branch_prefix"*)
+			ref=${ref#refs/heads/$branch_prefix}
+			;;
+		refs/remotes/"$branch_prefix"*)
+			ref=${ref#refs/remotes/$branch_prefix}
+			;;
+		*)
+			continue
+			;;
+		esac
+		printf '%s\n' "$ref"
+	done
+}
+
 __git_integration_options="\
 --create
 --add=
@@ -32,12 +66,19 @@ _git_integration () {
 	# trying to use it.
 	type compopt >/dev/null 2>&1 && compopt +o default +o bashdefault
 
+	local branch_prefix=$(git config --get integration.prefix 2>/dev/null)
 
 	local i found_command=0 found_create=0 nargs=0
 	for ((i=0; i < ${cword}; i++)); do
 		case "$found_command,${words[i]}" in
 		1,--create)
 			found_create=1
+			;;
+		1,--prefix)
+			branch_prefix=${words[i+1]}
+			;;
+		1,--prefix=)
+			branch_prefix=${words[i]#--prefix=}
 			;;
 		?,-*)
 			:
@@ -55,7 +96,8 @@ _git_integration () {
 
 	case "$cur" in
 	--add=*)
-		__gitcomp_nl "$(__git_refs)" "" "${cur##--add=}"
+		__gitcomp_nl "$(__git_refs | __git_integration_filter_prefix)" \
+				"" "${cur##--add=}"
 		return
 		;;
 	--prefix=*)
@@ -70,7 +112,7 @@ _git_integration () {
 
 	if test "$prev" = "--add"
 	then
-		__gitcomp_nl "$(__git_refs)"
+		__gitcomp_nl "$(__git_refs | __git_integration_filter_prefix)"
 		return
 	fi
 
@@ -79,7 +121,7 @@ _git_integration () {
 		__gitcomp_nl "$(__git_integration_branches)"
 		;;
 	?,1)
-		__gitcomp_nl "$(__git_heads)"
+		__gitcomp_nl "$(__git_heads | __git_integration_filter_prefix)"
 		;;
 	*)
 		COMPREPLY=()
