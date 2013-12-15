@@ -1,12 +1,12 @@
 base master
 
-merge stop-if-action-fails
+merge handle-osx-wc-whitespace
 
-  Fix handling of certain error scenarios.
+  Fix tests that rely on "wc -l" just printing a line count.
 
-merge fix-git-detect-error
+merge bashcomplete-prefix
 
-  Don't use an undefined function if finding Git fails.
+  Improve bash completion when a prefix is being applied to refs.
 
 merge check-git-version
 
