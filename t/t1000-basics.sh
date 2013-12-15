@@ -45,7 +45,7 @@ test_expect_success 'add branches to integration branch' '
 	git merge-base --is-ancestor branch1 HEAD &&
 	git merge-base --is-ancestor branch2 HEAD &&
 	test_must_fail git merge-base --is-ancestor branch3 HEAD &&
-	git log --merges --oneline | wc -l >actual &&
+	git log --merges --oneline | wc -l | tr -d " " >actual &&
 	echo 2 >expect &&
 	test_cmp expect actual
 '
@@ -67,7 +67,7 @@ test_expect_success 'add another branch and rebuild' '
 	git merge-base --is-ancestor branch1 HEAD &&
 	git merge-base --is-ancestor branch2 HEAD &&
 	git merge-base --is-ancestor branch3 HEAD &&
-	git log --merges --oneline | wc -l >actual &&
+	git log --merges --oneline | wc -l | tr -d " " >actual &&
 	echo 3 >expect &&
 	test_cmp expect actual
 '
