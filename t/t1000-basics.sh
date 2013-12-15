@@ -45,9 +45,8 @@ test_expect_success 'add branches to integration branch' '
 	git merge-base --is-ancestor branch1 HEAD &&
 	git merge-base --is-ancestor branch2 HEAD &&
 	test_must_fail git merge-base --is-ancestor branch3 HEAD &&
-	git log --merges --oneline | wc -l >actual &&
-	echo 2 >expect &&
-	test_cmp expect actual
+	git log --merges --oneline >actual &&
+	test_line_count = 2 actual
 '
 
 write_script .git/EDITOR <<\EOF
@@ -67,9 +66,8 @@ test_expect_success 'add another branch and rebuild' '
 	git merge-base --is-ancestor branch1 HEAD &&
 	git merge-base --is-ancestor branch2 HEAD &&
 	git merge-base --is-ancestor branch3 HEAD &&
-	git log --merges --oneline | wc -l >actual &&
-	echo 3 >expect &&
-	test_cmp expect actual
+	git log --merges --oneline >actual &&
+	test_line_count = 3 actual
 '
 
 test_expect_success 'do not create empty commits' '
