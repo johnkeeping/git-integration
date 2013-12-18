@@ -81,6 +81,12 @@ merged_file="$state_dir/merged"
 prefix_file="$state_dir/prefix"
 insns="$state_dir/git-integration-insn"
 
+# The newest feature we need is the "--comment-lines" option to
+# git-stripspace, so if that does not work, tell the user they need to
+# upgrade.
+git stripspace --comment-lines </dev/null 2>/dev/null ||
+die "Your Git is too old.  Please upgrade to Git 1.8.2 or newer."
+
 
 integration_ref () {
 	local branch
