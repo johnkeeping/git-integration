@@ -1,0 +1,54 @@
+Git-Integration v0.2 Release Notes
+==================================
+
+Changes since v0.1
+------------------
+
+ * A new instruction "." (dot) has been added which acts to disable an
+   instruction in the instruction sheet.
+
+ * A new command-line and configuration option "prefix" has been added
+   which helps when sharing instruction sheets between machines where
+   all branches live under the refs/remotes/ hierarchy; users can now
+   avoid writing "<remote>/" at the beginning of all refs in the
+   instruction sheet by setting the prefix option to "<remote>/"
+   instead.
+
+ * Logging of git-integration actions into the reflog has been audited
+   and made consistent.
+
+ * Avoid inserting empty commits into the instruction sheet branch when
+   the user closes their editor without changing the instruction sheet.
+
+ * Check that the version of Git in use is new enough; this avoids
+   cryptic errors when "git stripspace" fails in the middle of a shell
+   pipeline.
+
+Fixes since v0.1
+----------------
+
+ * Suppress a shell error message during integration branch creation
+   that doesn't affect the behaviour but is unnecessarily scary.
+
+ * Avoid using the GNU-ism "\n" in the replacement portion of sed's
+   substitute command when handling the "--add" command line option.
+
+ * Stop processing more options from the command line if an earlier one
+   fails.
+
+ * Allow the "--version" command line option to be used when
+   git-integration is run outside a Git repository.
+
+ * Don't use the bash-ism "local".
+
+ * Various documentation formatting fixes.
+
+Bash Completion
+
+ * Avoid an error message on stderr when using shell completion outside
+   a repository.
+
+Tests
+
+ * Fix tests using "wc -l" where the output format is different between
+   GNU and BSD variants.
