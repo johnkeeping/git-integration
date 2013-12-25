@@ -91,6 +91,14 @@ be performed in the order 'create', 'add', 'edit', 'cat', 'rebuild', 'status'.
 CONFIGURATION
 -------------
 
+branch.<name>.integrationAllowExec::
+	Allow the `exec` instruction to be used on integration branch
+	`<name>`.
+
+integration.allowExec::
+	Allow the `exec` instruction to be used on all integration branches in
+	this repository.
+
 integration.autocontinue::
 	Sets the default for the `--autocontinue` option.
 
@@ -120,6 +128,17 @@ following instructions are supported:
 If any options are given after the ref (and on the same line) then these are
 passed to 'git merge'.  This may be useful for specifying an alternative merge
 strategy for a branch.
+
++exec+ '<cmd>'::
+	Executes the specified command in the shell.  If the command fails
+	then the integration will stop, although it can be continued and will
+	not execute the same command again.
++
+For security, this command is not enabled by default.  You can enable it by
+setting an appropriate Git configuration variable to `true`, either
+`integration.allowExec` to enable the instruction on all integration branches
+in a repository or `branch.<name>.integrationAllowExec` to enable it only for
+a specific integration branch.
 
 +.+ '<args...>'::
 	Ignores this command and its description.  This can be used to remove

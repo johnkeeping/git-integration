@@ -269,6 +269,10 @@ Commands:
 		instruction list should begin with a "base" command.
  merge		Merges the specified branch.  Extended comment lines are
 		added to the commit message for the merge.
+ exec		Executes the specified command in the shell.  This command
+		is only enabled if the "integration.allowExec" or
+		"branch.<name>.integrationAllowExec" git-config value is
+		true.
  .		The command is ignored.
 EOF
 	} >"$edit_file"
@@ -284,7 +288,15 @@ EOF
 }
 
 break_integration () {
+	skip_current=
+	case "$1" in
+		--skip-current)
+			skip_current=1
+			shift
+			;;
+	esac
 	(
+		test -z "$skip_current" &&
 		printf '%s\n%s\n' "$current_insn" "$line"
 		cat
 	) >"$insns".new
@@ -372,6 +384,25 @@ do_base () {
 	break_integration "Failed to reset to base $base"
 }
 
+do_exec () {
+	if ! $(git config --bool integration.allowExec) &&
+	   ! $(git config --bool "branch.${branch#refs/heads/}.integrationAllowExec")
+	then
+		break_integration "'exec' command is not enabled!
+
+You must set one of the following git-config values to true in order to use
+this command:
+
+	integration.allowExec
+		if you want to allow 'exec' on all integration branches.
+
+	branch.${branch#refs/heads/}.integrationAllowExec
+		to allow 'exec' only on this branch."
+	fi
+	( eval "$*" ) ||
+	break_integration --skip-current "FAILED: exec $*"
+}
+
 do_dot () {
 	: no-op
 }
@@ -384,6 +415,9 @@ finalize_command () {
 	case "$cmd" in
 	base)
 		eval "do_base $args"
+		;;
+	exec)
+		eval "do_exec $args"
 		;;
 	merge)
 		eval "do_merge $args"
@@ -532,6 +566,11 @@ status_dot () {
 	test -n "$message" && echo "$message" | sed -e 's/^./    &/'
 }
 
+status_exec () {
+	printf '? exec %s\n' "$*"
+	test -n "$message" && printf '%s\n' "$message" | sed -e 's/^./    &/'
+}
+
 insn_status () {
 	local cmd args message
 	cmd=$1
@@ -541,6 +580,9 @@ insn_status () {
 	case "$cmd" in
 	base)
 		status_base="$branch_prefix$args"
+		;;
+	exec)
+		eval "status_exec $args"
 		;;
 	merge)
 		eval "status_merge $args"
