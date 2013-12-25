@@ -284,8 +284,10 @@ EOF
 }
 
 break_integration () {
-	printf '%s\n%s\n' "$current_insn" "$line" >"$insns".new
-	cat >>"$insns".new
+	(
+		printf '%s\n%s\n' "$current_insn" "$line"
+		cat
+	) >"$insns".new
 
 	mv "$insns".new "$insns"
 	echo "$merged" >"$merged_file"
