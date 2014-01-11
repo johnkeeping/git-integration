@@ -683,7 +683,15 @@ esac
 
 if test -f "$insns"
 then
-	die "Integration already in progress."
+	case $do_create,$do_edit,$do_rebuild,$do_cat,$do_status,"$branches_to_add"
+	in
+		0,0,0,?,?,)
+			: # OK to proceed - cat only
+			;;
+		*)
+			die "Integration already in progress."
+			;;
+	esac
 fi
 
 if test -n "$branches_to_add"
