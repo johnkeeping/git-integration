@@ -673,11 +673,18 @@ case $action in
 		integration_abort
 		exit
 		;;
+	'')
+		: # No-op.
+		;;
 	*)
-		test -f "$insns" &&
-		die "Integration already in progress."
+		die "internal error: unhandled action: $action"
 		;;
 esac
+
+if test -f "$insns"
+then
+	die "Integration already in progress."
+fi
 
 if test -n "$branches_to_add"
 then
