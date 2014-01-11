@@ -1,5 +1,17 @@
 base master
 
+merge allow-cat-while-in-progress
+
+  Allow using `--cat` and `--status` while paused during a rebuild
+
+merge exec-instruction
+
+  Add an "exec" instruction to permit the execution of arbitrary
+  commands.
+
+  The security aspects of this might need some more thought; perhaps the
+  "exec" instruction should be disabled unless a config key is set.
+
 . merge walk-commits-in-status
 
   Show the SHA-1 of the merge which brings a branch into the integration
@@ -17,5 +29,3 @@ base master
 . merge skip-option
 
   Needs more work to be able to handle "branch not found".
-
-merge exec-instruction
