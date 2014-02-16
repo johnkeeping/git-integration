@@ -1,9 +1,5 @@
 base master
 
-merge allow-cat-while-in-progress
-
-  Allow using `--cat` and `--status` while paused during a rebuild
-
 merge exec-instruction
 
   Add an "exec" instruction to permit the execution of arbitrary
