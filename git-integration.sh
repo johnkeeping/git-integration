@@ -673,11 +673,26 @@ case $action in
 		integration_abort
 		exit
 		;;
+	'')
+		: # No-op.
+		;;
 	*)
-		test -f "$insns" &&
-		die "Integration already in progress."
+		die "internal error: unhandled action: $action"
 		;;
 esac
+
+if test -f "$insns"
+then
+	case $do_create,$do_edit,$do_rebuild,$do_cat,$do_status,"$branches_to_add"
+	in
+		0,0,0,?,?,)
+			: # OK to proceed - cat only
+			;;
+		*)
+			die "Integration already in progress."
+			;;
+	esac
+fi
 
 if test -n "$branches_to_add"
 then
@@ -722,8 +737,15 @@ then
 else
 	if test $# = 0
 	then
-		branch=$(git symbolic-ref HEAD 2>/dev/null) ||
-		die "HEAD is detached, could not figure out which integration branch to use"
+		if test -f "$insns"
+		then
+			# Integration in progress.
+			branch=$(cat "$head_file" 2>/dev/null) ||
+			die "Internal error: instruction file exists but not HEAD file!"
+		else
+			branch=$(git symbolic-ref HEAD 2>/dev/null) ||
+			die "HEAD is detached, could not figure out which integration branch to use"
+		fi
 	else
 		branch=$(git check-ref-format --normalize "refs/heads/${1#refs/heads/}") &&
 		git rev-parse --quiet --verify "$branch^{commit}" >/dev/null ||
