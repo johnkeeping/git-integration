@@ -2,7 +2,7 @@ A2X = a2x
 ASCIIDOC = asciidoc
 INSTALL = install
 
-mandir = $(prefix)/share/man
+mandir ?= $(prefix)/share/man
 man1dir = $(mandir)/man1
 
 -include ../config.mak
