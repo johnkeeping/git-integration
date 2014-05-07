@@ -79,10 +79,13 @@ doc man html:
 install-doc:
 	$(MAKE) -C Documentation/ install
 
+install-html:
+	$(MAKE) -C Documentation/ install-html
+
 install-man:
 	$(MAKE) -C Documentation/ install-man
 
-.PHONY: doc man html install-doc install-man
+.PHONY: doc man html install-doc install-html install-man
 
 install-completion:
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bashcompletiondir_SQ)'
