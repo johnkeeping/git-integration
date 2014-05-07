@@ -79,6 +79,11 @@ doc man html:
 install-doc:
 	$(MAKE) -C Documentation/ install
 
+install-man:
+	$(MAKE) -C Documentation/ install-man
+
+.PHONY: doc man html install-doc install-man
+
 install-completion:
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bashcompletiondir_SQ)'
 	$(INSTALL) -m 644 git-integration.bashcomplete \
@@ -90,7 +95,7 @@ clean:
 	$(MAKE) -C Documentation/ clean
 	$(MAKE) -C t/ clean
 
-.PHONY: FORCE all clean test install install-doc install-completion doc man html
+.PHONY: FORCE all clean test install install-completion
 
 
 gh-pages:

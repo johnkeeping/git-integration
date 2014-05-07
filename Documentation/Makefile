@@ -35,11 +35,13 @@ html: $(MAN_HTML)
 
 doc: man html
 
-install: man
+install: install-man
+
+install-man: man
 	$(INSTALL) -d '$(DESTDIR_SQ)$(man1dir_SQ)'
 	$(INSTALL) -m 644 $(DOC_MAN1) '$(DESTDIR)$(man1dir_SQ)'
 
 clean:
 	$(RM) $(DOC_MAN1) $(MAN_HTML)
 
-.PHONY: all clean install-doc doc man man1 html
+.PHONY: all clean install install-man doc man man1 html
