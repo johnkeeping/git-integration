@@ -73,7 +73,7 @@ install: all
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bindir_SQ)'
 	$(INSTALL) -m 755 git-integration '$(DESTDIR_SQ)$(bindir_SQ)'
 
-doc man html:
+doc man html info:
 	$(MAKE) -C Documentation/ $@
 
 install-doc:
@@ -82,10 +82,13 @@ install-doc:
 install-html:
 	$(MAKE) -C Documentation/ install-html
 
+install-info:
+	$(MAKE) -C Documentation/ install-info
+
 install-man:
 	$(MAKE) -C Documentation/ install-man
 
-.PHONY: doc man html install-doc install-html install-man
+.PHONY: doc man html info install-doc install-html install-info install-man
 
 install-completion:
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bashcompletiondir_SQ)'
