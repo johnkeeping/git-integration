@@ -1,5 +1,10 @@
 base master
 
+merge empty-instruction
+
+  Add an "empty" instruction to allow the insertion of empty commits to
+  annotate points in an integration branch.
+
 merge exec-instruction
 
   Add an "exec" instruction to permit the execution of arbitrary
@@ -7,12 +12,6 @@ merge exec-instruction
 
   The security aspects of this might need some more thought; perhaps the
   "exec" instruction should be disabled unless a config key is set.
-
-merge empty-instruction
-
-empty
-
-  ### MATCH FOOBAR
 
 . merge walk-commits-in-status
 
