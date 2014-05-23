@@ -63,4 +63,21 @@ test_expect_success 'branch deleted' '
 	grep "^\\* branch2" actual
 '
 
+test_expect_success 'empty commit' '
+	write_script .git/EDITOR <<-\EOF &&
+	cat >"$1" <<EOM
+	base master
+	empty
+	  ### start
+	merge branch2
+	EOM
+	EOF
+	GIT_EDITOR=.git/EDITOR git integration --edit &&
+	git integration --status >actual &&
+	grep "^- <empty>" actual &&
+	git integration --rebuild &&
+	git integration --status >actual &&
+	grep "^\\* <empty>" actual
+'
+
 test_done

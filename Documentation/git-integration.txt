@@ -112,6 +112,12 @@ following instructions are supported:
 	This should always be the first instruction in the instruction sheet,
 	and should appear only at the top of the instruction sheet.
 
++empty+::
+	Adds an empty commit into the integration branch, using the following
+	comment as the commit's message.  This can be useful to add a comment
+	into the integration branch, for example if you expect a certain
+	point in the integration to be tree-identical with some other branch.
+
 +merge+ '<ref>' '[<options>]'::
 	Merges the specified ref into the integration branch.  Any comments
 	following the instruction are appended to the merge commit's commit

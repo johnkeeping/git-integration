@@ -178,6 +178,8 @@ run_insn_command () {
 	message=$(echo "$2" | sed -e 1d | dedent)
 	cmd=${first_line%% *}
 	args=${first_line#* }
+	# If first_line does not contain a space, do not set args=cmd:
+	test "$cmd" = "$args" && args=
 
 	$insn_cmd "$cmd" "$args" "$message"
 }
@@ -267,6 +269,8 @@ Lines beginning with $comment_char are stripped.
 Commands:
  base		Resets the branch to the specified state.  Every integration
 		instruction list should begin with a "base" command.
+ empty		Insert an empty commit with the comment used as the body of
+		the commit message.
  merge		Merges the specified branch.  Extended comment lines are
 		added to the commit message for the merge.
  .		The command is ignored.
@@ -309,6 +313,18 @@ finish_integration () {
 	rm -rf "$state_dir" &&
 	git gc --auto &&
 	echo "Successfully re-integrated ${branch#refs/heads/}."
+}
+
+do_empty () {
+	test $# = 0 || echo >&2 "warning: ignoring arguments to 'empty' command: $*"
+
+	subject=$(printf '%s\n' "$message" | sed -e 1q)
+	sha1=$(printf '%s\n' "$message" |
+		git commit-tree HEAD^{tree} -p HEAD -F -
+	) &&
+	git-update-ref -m "$GIT_REFLOG_ACTION: Empty commit: $subject" \
+		HEAD "$sha1" || break_integration
+	say "Added empty commit: $subject"
 }
 
 do_merge () {
@@ -382,6 +398,9 @@ finalize_command () {
 	case "$cmd" in
 	base)
 		eval "do_base $args"
+		;;
+	empty)
+		eval "do_empty $args"
 		;;
 	merge)
 		eval "do_merge $args"
@@ -484,6 +503,24 @@ insn_branch_length () {
 	fi
 }
 
+status_empty () {
+	test -n "$status_base" || status_base=master
+
+	subject=$(printf '%s\n' "$message" | sed -e 1q)
+
+	if merged_sha1=$(git rev-parse --verify --quiet "$branch^{/$subject}") &&
+	   ! git merge-base --is-ancestor "$merged_sha1" "$status_base"
+	then
+		state="$color_uptodate*"
+	else
+		state="$color_changed-"
+	fi
+
+	printf '%s %-*s%s%s\n' "$state" "$longest_branch" '<empty>' "$color_reset"
+	test -n "$message" && printf '%s\n' "$message" | sed -e 's/^./    &/'
+	echo
+}
+
 # Show the status of a merge command in the instruction sheet.
 #
 # $1 - branch to be shown
@@ -539,6 +576,9 @@ insn_status () {
 	case "$cmd" in
 	base)
 		status_base="$branch_prefix$args"
+		;;
+	empty)
+		eval "status_empty $args"
 		;;
 	merge)
 		eval "status_merge $args"
