@@ -8,6 +8,8 @@ merge exec-instruction
   The security aspects of this might need some more thought; perhaps the
   "exec" instruction should be disabled unless a config key is set.
 
+merge empty-command
+
 empty
 
   ### MATCH FOOBAR
