@@ -1,4 +1,4 @@
-REL_VERSION = v0.2
+REL_VERSION = v0.3
 
 # The default target is...
 all::
