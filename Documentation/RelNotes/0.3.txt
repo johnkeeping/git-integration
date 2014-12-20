@@ -1,0 +1,14 @@
+Git-Integration v0.3 Release Notes
+==================================
+
+Changes since v0.2
+------------------
+
+ * The `--cat` and `--status` command-line options can now be used while an
+   integration is in progress.  There was never any particular reason to
+   forbid this, they were just caught in a wide net that forbid everything
+   except `--continue` and `--abort` while an integration was in progress.
+
+ * Makefile targets have been added for building and installing HTML and .info
+   format documentation.  This makes it possible to use `git help --info` and
+   `git help --web` to view git-integration's documentation.
