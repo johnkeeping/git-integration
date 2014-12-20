@@ -11,6 +11,6 @@ include::install.txt[]
 
 LICENSE
 -------
-'git integration' is copyright 2013 John Keeping and is licensed under the
+'git integration' is copyright 2013-14 John Keeping and is licensed under the
 link:http://www.gnu.org/licenses/gpl-2.0.html[GNU General Public License
 Version 2].
