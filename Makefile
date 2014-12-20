@@ -73,11 +73,22 @@ install: all
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bindir_SQ)'
 	$(INSTALL) -m 755 git-integration '$(DESTDIR_SQ)$(bindir_SQ)'
 
-doc man html:
+doc man html info:
 	$(MAKE) -C Documentation/ $@
 
 install-doc:
 	$(MAKE) -C Documentation/ install
+
+install-html:
+	$(MAKE) -C Documentation/ install-html
+
+install-info:
+	$(MAKE) -C Documentation/ install-info
+
+install-man:
+	$(MAKE) -C Documentation/ install-man
+
+.PHONY: doc man html info install-doc install-html install-info install-man
 
 install-completion:
 	$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(bashcompletiondir_SQ)'
@@ -90,7 +101,7 @@ clean:
 	$(MAKE) -C Documentation/ clean
 	$(MAKE) -C t/ clean
 
-.PHONY: FORCE all clean test install install-doc install-completion doc man html
+.PHONY: FORCE all clean test install install-completion
 
 
 gh-pages:

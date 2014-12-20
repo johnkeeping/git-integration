@@ -7,6 +7,9 @@
 /gh-pages
 *.1
 *.html
+*.info
+*.texi
+*.xml
 
 t/test-results/
 t/trash directory.*/
