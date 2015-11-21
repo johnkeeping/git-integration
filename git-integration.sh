@@ -528,6 +528,7 @@ status_merge () {
 status_dot () {
 	printf '. %s\n' "$*"
 	test -n "$message" && echo "$message" | sed -e 's/^./    &/'
+	echo
 }
 
 insn_status () {
