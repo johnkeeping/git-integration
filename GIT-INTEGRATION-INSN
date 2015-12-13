@@ -1,9 +1,5 @@
 base master
 
-merge status-fixes
-
-  Minor tweaks to the formatting of --status output.
-
 merge empty-instruction
 
   Add an "empty" instruction to allow the insertion of empty commits to
