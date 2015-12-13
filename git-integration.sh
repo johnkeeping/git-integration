@@ -518,7 +518,7 @@ status_merge () {
 	local color
 	test -z "$use_color" || color='--color=always'
 	printf '%s %-*s%s(%s)\n' "$state" "$longest_branch" "$branch_to_merge" "$color_reset" "$verbose_state"
-	test -n "$message" && echo "$message" | sed -e 's/^./    &/'
+	test -n "$message" && printf '%s\n' "$message" | sed -e 's/^./    &/'
 	echo
 	git --no-pager log --oneline $color --cherry "$status_base...$branch_to_merge" -- 2>/dev/null |
 	sed -e 's/^/  /' -e '$ a \
@@ -527,7 +527,8 @@ status_merge () {
 
 status_dot () {
 	printf '. %s\n' "$*"
-	test -n "$message" && echo "$message" | sed -e 's/^./    &/'
+	test -n "$message" && printf '%s\n' "$message" | sed -e 's/^./    &/'
+	echo
 }
 
 insn_status () {
