@@ -1,5 +1,10 @@
 base master
 
+merge base-tag
+
+  Avoid failing in git-update-ref if an annotated tag is given as the
+  base for an integration branch.
+
 merge empty-instruction
 
   Add an "empty" instruction to allow the insertion of empty commits to
