@@ -224,7 +224,7 @@ integration_create () {
 	branch=$1
 	base=$2
 
-	git update-ref $branch "$branch_prefix$base" $_x40 &&
+	git update-ref $branch "$branch_prefix$base^{commit}" $_x40 &&
 
 	echo "base ${base#$branch_prefix}" |
 	write_insn_sheet $(integration_ref $branch) &&
