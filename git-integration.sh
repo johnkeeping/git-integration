@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-14  John Keeping
+# Copyright (C) 2013-16  John Keeping
 # Licensed under the GNU GPL version 2.
 
 # If we haven't been called via Git, see if we can tweak $PATH so
