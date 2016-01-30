@@ -1,0 +1,10 @@
+Git-Integration v0.4 Release Notes
+==================================
+
+Fixes since v0.3
+----------------
+
+ * An annotated tag can now be used as the base of an integration
+   branch.
+
+ * Some cosmetic improvements to `git integration --status` output.
