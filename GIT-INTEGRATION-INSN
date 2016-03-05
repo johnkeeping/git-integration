@@ -1,5 +1,9 @@
 base master
 
+merge fix-cat-when-in-progress
+
+  Allow --cat and --status to be used while rebuilding (attempt 2).
+
 merge empty-instruction
 
   Add an "empty" instruction to allow the insertion of empty commits to
