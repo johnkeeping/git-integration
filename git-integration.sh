@@ -686,7 +686,7 @@ if test -f "$insns"
 then
 	case $do_create,$do_edit,$do_rebuild,$do_cat,$do_status,"$branches_to_add"
 	in
-		0,0,0,?,?,)
+		0,0,auto,?,?,|0,0,0,?,?,)
 			: # OK to proceed - cat only
 			;;
 		*)
