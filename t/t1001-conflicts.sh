@@ -81,6 +81,16 @@ test_expect_success 'abort does not move other branches' '
 	test_cmp expect actual
 '
 
+test_expect_success '--cat can be used while in-progress' '
+	git checkout pu &&
+	git reset --hard master &&
+	git integration --cat >expect &&
+	test_must_fail git integration --rebuild &&
+	git integration --cat >actual &&
+	git integration --abort &&
+	test_cmp expect actual
+'
+
 write_script .git/EDITOR <<\EOF
 #!/bin/sh
 cat >>"$1" <<EOM
