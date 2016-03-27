@@ -1,8 +1,9 @@
 base master
 
-merge fix-cat-when-in-progress
+merge keep-autocontinue-state
 
-  Allow --cat and --status to be used while rebuilding (attempt 2).
+  Preserve the autocontinue state after a merge failure by reading it
+  back during "git integration --continue".
 
 merge empty-instruction
 
