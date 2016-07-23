@@ -1,9 +1,9 @@
 base master
 
-merge keep-autocontinue-state
+merge pre-push-hook
 
-  Preserve the autocontinue state after a merge failure by reading it
-  back during "git integration --continue".
+  Add a sample pre-push hook to push instructions when an integration
+  branch is pushed.
 
 merge empty-instruction
 
