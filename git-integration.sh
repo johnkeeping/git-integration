@@ -79,6 +79,7 @@ start_file="$state_dir/start-point"
 head_file="$state_dir/head-name"
 merged_file="$state_dir/merged"
 prefix_file="$state_dir/prefix"
+autocontinue_file="$state_dir/autocontinue"
 insns="$state_dir/git-integration-insn"
 
 # The newest feature we need is the "--comment-lines" option to
@@ -422,6 +423,7 @@ integration_rebuild () {
 	die "Failed to create state directory"
 
 	echo $branch >"$head_file"
+	echo $autocontinue >"$autocontinue_file"
 	printf '%s\n' "$branch_prefix" >"$prefix_file"
 	git rev-parse --quiet --verify "$branch" >"$start_file"
 
@@ -465,6 +467,7 @@ integration_continue () {
 
 	merged=$(cat "$merged_file")
 	branch_prefix=$(cat "$prefix_file")
+	autocontinue=$(cat "$autocontinue_file")
 
 	cat "$insns" | run_integration "$merged" "$skip_commit"
 }
