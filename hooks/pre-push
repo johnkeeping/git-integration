@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Sample hook to ensure instructions are pushed when pushing an integration
+# branch.  This sample also aborts the push if any instruction refs do not
+# fast forward.
+
+remote_name=$1
+remote_url=$2
+
+while read -r local_ref local_sha1 remote_ref remote_sha1
+do
+	case "$local_ref" in
+	refs/heads/*)
+		:
+		;;
+	*)
+		continue
+		;;
+	esac
+
+	insn_ref=refs/insns/${local_ref#refs/heads/}
+	git rev-parse --quiet --verify "$insn_ref" || continue
+
+	git push "$remote_name" "$insn_ref" || exit
+done
