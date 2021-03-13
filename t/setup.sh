@@ -19,7 +19,7 @@ fi
 
 if test -z "$TEST_NO_CREATE_REPO"
 then
-	git init >/dev/null || die
+	git -c init.defaultBranch=master init >/dev/null || die
 fi
 
 
