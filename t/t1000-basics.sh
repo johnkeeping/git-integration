@@ -77,4 +77,40 @@ test_expect_success 'do not create empty commits' '
 	test_cmp expect actual
 '
 
+write_script .git/EDITOR <<\EOF
+#!/bin/sh
+cat >"$1" <<EOM
+base master
+
+merge branch1
+
+  This merges branch 1.
+
+merge branch2
+
+  This merges branch 2.
+
+empty
+
+  ### Expect branch2
+
+merge branch3
+
+  This merges branch 3.
+EOM
+EOF
+
+test_expect_success 'empty instruction' '
+	GIT_EDITOR=.git/EDITOR git integration --edit pu &&
+	git integration --rebuild pu &&
+	git merge-base --is-ancestor branch1 HEAD &&
+	git merge-base --is-ancestor branch2 HEAD &&
+	git merge-base --is-ancestor branch3 HEAD &&
+	git log --merges --oneline >actual &&
+	test_line_count = 3 actual &&
+	git merge-base --is-ancestor branch1 ":/### Expect branch2" &&
+	git merge-base --is-ancestor branch2 ":/### Expect branch2" &&
+	test_must_fail git merge-base --is-ancestor branch3 ":/### Expect branch2"
+'
+
 test_done
